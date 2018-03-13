@@ -1,0 +1,19 @@
+@import "font";
+@import "color";
+
+$application-font-family: $_font_family-helvetica;
+
+$main-bg-color: $color_yellow-whitened;
+$border-light-color: $color_gray-whitened;
+$toolbar-bg-color: $color_brown-smooth;
+$sidebar-bg-color: $color_brown-deep;
+$content-bg-color: $color_gray-whitened;
+
+$arch-wrapper-min-width: 960px;
+$arch-wrapper-min-height: 470px;
+
+$section-width: 25%;
+$section-max-width: 400px;
+
+$avatar-size: 40px;
+

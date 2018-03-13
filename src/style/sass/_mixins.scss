@@ -1,0 +1,146 @@
+@mixin arrow($size, $back, $front) {
+
+  &:before, &:after {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 50%;
+    bottom: -1px;
+
+  }
+  &:before {
+    //margin-left: -(($size + 2)/2 + 1);
+    margin-left: -($size + 2);
+    border-bottom: ($size + 2) solid $back;
+    border-left: ($size + 2) solid transparent;
+    border-right: ($size + 2) solid transparent;
+    z-index: 10;
+  }
+  &:after {
+    //margin-left: -($size/2);
+    margin-left: -$size;
+    border-bottom: $size solid $front;
+    border-left: $size solid transparent;
+    border-right: $size solid transparent;
+    z-index: 11;
+  }
+
+}
+@mixin arrow-bottom($size, $back, $front) {
+
+  &:before, &:after {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 50%;
+    bottom: -1px;
+
+  }
+  &:before {
+    margin-left: -($size + 2);
+    border-top: ($size + 2) solid $back;
+    border-left: ($size + 2) solid transparent;
+    border-right: ($size + 2) solid transparent;
+    z-index: 10;
+  }
+  &:after {
+    margin-left: -$size;
+    border-top: $size solid $front;
+    border-left: $size solid transparent;
+    border-right: $size solid transparent;
+    z-index: 11;
+  }
+
+}
+@mixin arrow-left($size, $back, $front) {
+
+  &:before, &:after {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+
+  }
+  &:after {
+    margin-left: -($size + 2);
+    border-bottom: ($size + 2) solid transparent;
+    border-top: ($size + 2) solid transparent;
+    border-right: ($size + 2) solid $back;
+    z-index: 10;
+  }
+  &:before {
+    margin-left: -$size;
+    border-bottom: $size solid transparent;
+    border-top: $size solid transparent;
+    border-right: $size solid $front;
+    z-index: 11;
+  }
+
+}
+@mixin arrow-right($size, $back) {
+  &:before, &:after {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 100%;
+    top: 0;
+  }
+  &:before {
+    border-bottom: $size solid transparent;
+    border-left: $size solid $back;
+    border-top: $size solid transparent;
+    z-index: 10;
+  }
+}
+@mixin toggle-arrow($state, $color, $side: 'left', $size: 5px) {
+  @if $state == 'init' {
+    &:after {
+      content: '';
+      border-left: $size solid $color;
+      border-top: $size solid transparent;
+      border-bottom: $size solid transparent;
+      cursor: pointer;
+      position: absolute;
+      top: 50%;
+      @if $side == 'left' {
+        left: $size + 3px;
+      }
+      @if $side == 'right' {
+        right: $size + 3px;
+      }
+      margin-top: -$size;
+    }
+  } @else if $state == 'expand' {
+    &:after {
+      border-top: $size solid $color;
+      border-right: $size solid transparent;
+      border-left: $size solid transparent;
+      margin-top: -$size + 3px;
+      @if $side == 'left' {
+        left: $size;
+      }
+      @if $side == 'right' {
+        right: $size;
+      }
+    }
+  }
+}
+@mixin text-overflow-ellipsis(){
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale3d(.2, .2, .2);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale3d(1, 1, 1);
+  }
+}

@@ -1,0 +1,97 @@
+.digits-input {
+  display: flex;
+  flex-wrap: wrap;
+  border-radius: 0 8px 8px 0;
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: 70px 30px 20px 30px;
+  position: relative;
+  background-color: $color_red-whitened-rgba;
+  border: 1px solid $color_red-smooth;
+  border-left: 2px solid $color_red-whitened-rgba;
+  margin-left: -1px;
+
+  .history-button {
+    position: absolute;
+    height: 9px;
+    top: 45px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+    box-shadow: inset 0px 0px 40px -5px $color_red-dark-rgba;
+    border: 1px solid $color_red-deep;
+    border-radius: 6px 6px 0 0;
+    font-weight: 900;
+    transition: all 0.3s ease-in;
+
+    .placeholder {
+      font-size: $_font-size-large;
+      margin-left: 50%;
+      transform: translateX(-50%);
+    }
+    .button-text {
+      opacity: 0;
+    }
+    &:hover {
+      cursor: pointer;
+      height: 30px;
+      top: 24px;
+
+      .placeholder {
+        display: none;
+      }
+      .button-text {
+        opacity: 1;
+      }
+    }
+  }
+  .input-wrapper {
+    flex: 0 0 100%;
+    width: 100%;
+    display: flex;
+    box-shadow: inset 0px 0px 40px -5px $color_red-dark-rgba;
+    border: 1px solid $color_red-deep;
+    border-radius: 6px;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2;
+
+
+    .words-button {
+      flex: 0 0 55px;
+      box-sizing: border-box;
+      width: 70px;
+      height: 50px;
+    }
+    input {
+      width: 100%;
+      background-color: transparent;
+      border: none;
+      border-left: 2px solid $color_red-deep;
+      color: $color_yellow-light;
+      font-size: $_font-size-extra-large;
+      font-weight: 900;
+
+      &::placeholder {
+        color: $color_yellow-light;
+        font-size: $_font-size-large;
+        font-weight: 300;
+      }
+    }
+  }
+  .words-label {
+    color: $color_yellow-light;
+    font-size: $_font-size-regular;
+    font-weight: 600;
+    text-decoration: underline;
+    margin-top: 5px;
+    position: relative;
+    top: -20px;
+    opacity: 0;
+    transition: all 0.3s ease-in;
+
+    &.show-label {
+      top: 0;
+      opacity: 1;
+    }
+  }
+}
