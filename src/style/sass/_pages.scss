@@ -1,6 +1,7 @@
 #application-page-content {
   background-image: url('./asset/calendar-background.jpg');
   background-size: 100% 100%;
+  color: $color_blue-light;
 
   .page-wrapper {
     height: 100%;
@@ -72,6 +73,67 @@
     }
     .small-label {
       font-size: $_font-size-small;
+    }
+    .employee-entry, .employee-placeholder {
+      .entry-name {
+        color: $color_orange-light;
+      }
+    }
+    .position-entry, .position-placeholder {
+      .entry-name {
+        color: $color_brown-deep;
+      }
+    }
+    .sidebar-section {
+      flex: 0 0 100%;
+      padding: 15px 10px;
+      box-sizing: border-box;
+
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        cursor: pointer;
+        font-size: $_font-size-medium;
+      }
+      .sidebar-entry:not(:last-child) {
+        box-shadow: 0px -55px 80px -75px $color_blue-light inset;
+        padding-bottom: 7px;
+        margin-bottom: 7px;
+      }
+      &:not(:last-child) {
+        border-bottom: 1px solid $color_blue-clean;
+      }
+    }
+    .position-placeholder {
+      padding: 3px 7px;
+      border: 1px solid black;
+      border-radius: 6px;
+      margin-bottom: 5px;
+    }
+    .employee-placeholder {
+      padding: 3px 7px;
+      border: 1px solid black;
+      border-radius: 6px;
+      background-color: green;
+      margin-bottom: 5px;
+      margin-right: 5px;
+    }
+    .shift-color, .position-color {
+      width: $avatar-size;
+      height: $avatar-size;
+      border-radius: 50%;
+      border: 1px solid black;
+      overflow: hidden;
+    }
+    .shift-positions-wrapper, .shift-employees-wrapper {
+      display: flex;
+      flex-direction: column;
+      max-width: calc((100% - #{$avatar-size} - 100px) / 2);
+      margin-left: 10px;
+    }
+    .shift-employees-wrapper {
+      padding-left: 10px;
+      border-left: 1px solid black;
     }
   }
 }

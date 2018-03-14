@@ -5,31 +5,14 @@
   padding: 15px;
   color: $color_yellow-whitened;
   position: relative;
-  background-color: $color_red-whitened-rgba;
-  border: 1px solid $color_red-smooth;
-  border-radius: 8px;
+  background-color: $color_gray-dark-rgba;
 
   .sidebar-section {
-    flex: 0 0 100%;
-    padding: 7px 0;
-    border-bottom: 1px solid $color_red-smooth;
 
-    .section-header {
-      display: flex;
-      justify-content: space-between;
-      cursor: pointer;
-    }
     .section-container {
       display: none;
       padding-top: 10px;
       margin-top: 10px;
-      border-top: 1px solid red;
-    }
-    .sidebar-entry:not(:last-child) {
-      box-shadow: 0px -55px 80px -75px red inset;
-      padding-bottom: 7px;
-      margin-bottom: 7px;
-      border-bottom: 1px dotted red;
     }
     .entry-row {
       display: flex;
@@ -70,37 +53,6 @@
       .employee-placeholder {
         max-width: calc((100% - #{$avatar-size} - 10px) / 2);
       }
-    }
-    .position-placeholder {
-      padding: 3px 7px;
-      border: 1px solid black;
-      border-radius: 6px;
-      margin-bottom: 5px;
-    }
-    .employee-placeholder {
-      padding: 3px 7px;
-      border: 1px solid black;
-      border-radius: 6px;
-      background-color: green;
-      margin-bottom: 5px;
-      margin-right: 5px;
-    }
-    .shift-color, .position-color {
-      width: $avatar-size;
-      height: $avatar-size;
-      border-radius: 50%;
-      border: 1px solid black;
-      overflow: hidden;
-    }
-    .shift-positions-wrapper, .shift-employees-wrapper {
-      display: flex;
-      flex-direction: column;
-      max-width: calc((100% - #{$avatar-size} - 100px) / 2);
-      margin-left: 10px;
-    }
-    .shift-employees-wrapper {
-      padding-left: 10px;
-      border-left: 1px solid black;
     }
     .shift-description {
       padding-left: 10px;

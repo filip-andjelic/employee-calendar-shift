@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import Actions from '../core/action_creators';
 import {Core} from '../core/core';
 import {LeftSidebar} from '../components/LeftSidebar';
+import {RightSidebar} from '../components/RightSidebar';
 import {Calendar} from '../components/Calendar';
 
 function bindListerToLocalState(component) {
@@ -96,7 +97,7 @@ export const CalendarPage = React.createClass({
                                  employees={this.state.employees}
                                  handlers={this.state.handlers}/>
                 </div>
-                <div className="page-section central-page-section">
+                <div className="border-less page-section central-page-section">
                     <Calendar employeeClick={this.state.calendarHandlers.employee}
                               shiftClick={this.state.calendarHandlers.shift}
                               employees={this.state.employees}/>

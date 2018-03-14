@@ -1,19 +1,25 @@
 .calendar {
   background-color: $color_gray-dark-rgba;
+  padding: 10px 15px;
 
   .calendar-header {
     display: flex;
     padding: 7px;
+    cursor: pointer;
+  }
+  .calendar-body {
+    margin-bottom: 60px;
   }
   .entry-placeholder {
     flex: 0 0 220px;
     width: 220px;
     box-sizing: border-box;
     padding-right: 5px;
-    border-right: 1px solid red;
+    border-right: 1px solid $color_blue-clean;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+    cursor: pointer;
 
     .entry-name {
       font-size: $_font-size-large;
@@ -53,8 +59,9 @@
   .day-column {
     flex: 1 1 0;
     text-align: center;
-    padding: 0 2px;
+    padding: 0 5px;
     margin: 0 2px;
+    cursor: pointer;
 
     .day-name {
       font-size: $_font-size-large;
@@ -76,13 +83,13 @@
       margin-right: 3px;
     }
     &:not(:last-child) {
-      border-right: 1px solid red;
+      border-right: 1px solid $color_blue-clean;
     }
   }
   .entry-calendar-row {
     display: flex;
     margin-top: 7px;
     padding: 14px 7px 7px 7px;
-    border-top: 1px solid red;
+    box-shadow: 0px 55px 80px -75px $color_blue-light inset;
   }
 }
