@@ -30,6 +30,7 @@
     "file-loader": "^1.1.11",
     "ignore-loader": "^0.1.2",
     "immutable": "3.7.6",
+    "moment": "^2.21.0",
     "node-sass": "^4.7.2",
     "object-assign": "4.0.1",
     "react": "0.14.7",

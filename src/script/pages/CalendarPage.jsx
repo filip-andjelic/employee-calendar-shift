@@ -4,8 +4,7 @@ import {connect} from 'react-redux';
 import Actions from '../core/action_creators';
 import {Core} from '../core/core';
 import {LeftSidebar} from '../components/LeftSidebar';
-
-//import {DigitsInput} from '../components/DigitsInput';
+import {Calendar} from '../components/Calendar';
 
 function bindListerToLocalState(component) {
     isListenerAttached = true;
@@ -62,6 +61,25 @@ export const CalendarPage = React.createClass({
                 employee: (employee, shouldDelete) => {
                     this.props.handleEmployee(employee, shouldDelete);
                 }
+            },
+            filterHandlers: {
+                shift: (shift) => {
+                    // @TODO handle filtering of left sidebar accordion on clicked entry
+                },
+                position: (position) => {
+                    // @TODO handle opening of left sidebar accordion on clicked entry;
+                },
+                employee: (employee) => {
+                    // @TODO handle opening of left sidebar accordion on clicked entry
+                }
+            },
+            calendarHandlers: {
+                employee: (entry) => {
+                    // @TODO handle opening of left sidebar accordion on clicked entry
+                },
+                shift: (entry) => {
+                    // @TODO handle opening of left sidebar accordion on clicked entry
+                }
             }
         };
     },
@@ -79,8 +97,15 @@ export const CalendarPage = React.createClass({
                                  handlers={this.state.handlers}/>
                 </div>
                 <div className="page-section central-page-section">
+                    <Calendar employeeClick={this.state.calendarHandlers.employee}
+                              shiftClick={this.state.calendarHandlers.shift}
+                              employees={this.state.employees}/>
                 </div>
                 <div className="border-less page-section">
+                    <RightSidebar shifts={this.state.shifts}
+                                  positions={this.state.positions}
+                                  employees={this.state.employees}
+                                  handlers={this.state.filterHandlers}/>
                 </div>
             </div>
         </div>;

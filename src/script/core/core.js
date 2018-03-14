@@ -98,6 +98,10 @@ function getShifts() {
     return currentState.get('shifts');
 }
 
+function generateRandom() {
+    return new Date().valueOf() * Math.random();
+}
+
 const employeeApi = {
     updateEmployee: (state, employee) => {
         const employees = state.get('employees');
@@ -167,15 +171,14 @@ const mockShiftData = new Map({
             name: 'Prvi zaposleni',
             avatarClass: 'male',
             position: {},
-            shift: new Map()
+            shifts: [new Map()]
         }, {
             id: 'employee2',
             name: 'Drugi zaposleni',
             avatarClass: 'female',
             position: {},
-            shift: new Map()
+            shifts: [new Map()]
         }],
-        dates: new List(),
         color: 'crimson'
     }
 });
@@ -216,14 +219,17 @@ const mockEmployeeData = new Map({
         name: 'Prvi zaposleni',
         avatarClass: 'male',
         position: mockPositionData.get('position1'),
-        shift: new Map()
+        shifts: [{
+            shift: mockShiftData.get('shift1'),
+            dates: ['13/03/2018', '16/03/2018']
+        }]
     },
     employee2: {
         id: 'employee2',
         name: 'Drugi zaposleni',
         avatarClass: 'female',
         position: mockPositionData.get('position2'),
-        shift: new Map()
+        shifts: []
     }
 });
 
@@ -246,6 +252,7 @@ export const Core = {
     getCurrentState: getCurrentState,
     getEmployeeAvatarClasses: getEmployeeAvatarClasses,
     getColors: getColors,
+    getUniqueId: generateRandom,
     socket: socket,
     store: store
 };

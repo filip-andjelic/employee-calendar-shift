@@ -1,0 +1,88 @@
+.calendar {
+  background-color: $color_gray-dark-rgba;
+
+  .calendar-header {
+    display: flex;
+    padding: 7px;
+  }
+  .entry-placeholder {
+    flex: 0 0 220px;
+    width: 220px;
+    box-sizing: border-box;
+    padding-right: 5px;
+    border-right: 1px solid red;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+    .entry-name {
+      font-size: $_font-size-large;
+      font-weight: 900;
+      padding: 3px 10px 5px 40px;
+    }
+    .avatar {
+      display: flex;
+      flex: 0 0 $avatar-size;
+      width: $avatar-size;
+      height: $avatar-size;
+      justify-content: center;
+      align-items: center;
+      background-color: red;
+      border: 1px solid black;
+      border-radius: 50%;
+      font-size: $_font-size-extra-large;
+    }
+    .position-placeholder {
+      max-width: calc(100% - 55px);
+      padding: 3px 7px;
+      border: 1px solid black;
+      border-radius: 6px;
+      margin-bottom: 5px;
+    }
+
+    &.directions-wrapper {
+      padding-left: 7px;
+    }
+  }
+  .directions-wrapper {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    font-size: 30px;
+  }
+  .day-column {
+    flex: 1 1 0;
+    text-align: center;
+    padding: 0 2px;
+    margin: 0 2px;
+
+    .day-name {
+      font-size: $_font-size-large;
+      text-decoration: underline;
+      font-style: italic;
+    }
+    .day-date {
+      font-size: $_font-size-small;
+    }
+    .shift-entry {
+      max-width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 3px 5px;
+      border: 1px solid black;
+      border-radius: 6px;
+      margin-bottom: 5px;
+      margin-right: 3px;
+    }
+    &:not(:last-child) {
+      border-right: 1px solid red;
+    }
+  }
+  .entry-calendar-row {
+    display: flex;
+    margin-top: 7px;
+    padding: 14px 7px 7px 7px;
+    border-top: 1px solid red;
+  }
+}
