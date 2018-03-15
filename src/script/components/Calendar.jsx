@@ -2,8 +2,8 @@ import React from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import {Core} from '../core/core';
 
-const moment = require('../../../node_modules/moment/min/moment.min.js');
-const dateFormat = 'DD/MM/YYYY';
+const moment = Core.moment;
+const dateFormat = Core.dateFormat;
 
 function setDateRange(number, component) {
     let pickedWeekNumber = 0;
@@ -68,32 +68,55 @@ export const Calendar = React.createClass({
     },
     render: function() {
         const component = this;
-        const dayColumnHandle = (day) => {
-            // When header column is clicked expand the day
+        const dayColumnHandle = (day, isHeaderClicked) => {
+            // When header day column is clicked, expand day data.
+            if (isHeaderClicked) {
 
-            // When shift entry is clicked open edit sidebar accordion
+            } else {
+                // When body day column is clicked, guide to left sidebar.
+
+            }
         };
         const isCurrentDate = (dayObject) => {
+            if (!dayObject || dayObject.date !== moment().format(dateFormat)) {
+                return false;
+            }
 
+            return true;
         };
         const dateChangeHandle = (number, isShiftColumn) => {
             this.setState({'directionValue': number});
             setDateRange(number, component);
         };
+        /*
+         *  Takes employee object, builds shift objects based on its' dates.
+         *  Attached shift objects to corresponding days in week, if any.
+         *  Returns array of React Component Symbols.
+         *
+         *  Used to build Calendar header columns, when no employee objects is passed.
+         *
+         *  @param optional / entry {Employee Object}
+         *
+         *  @return daysOfWeekArray {Array}
+         */
         let daysOfWeekColumns = (entry) => {
             let daysOfWeekArray = [];
 
+            // If employee object is passed, build Calendar body row.
             if (entry) {
                 const shifts = entry.shifts;
                 let shiftMapping = {};
 
-                shifts.forEach((shiftObject) => {
-                    shiftObject.dates.forEach((date) => {
-                        shiftMapping[date] = shiftMapping[date] ? shiftMapping[date].push(shiftObject.shift) : [shiftObject.shift];
+                // Map shifts by its' dates.
+                if (shifts) {
+                    shifts.forEach((shiftObject) => {
+                        shiftObject.dates.forEach((date) => {
+                            shiftMapping[date] = shiftMapping[date] ? shiftMapping[date].push(shiftObject.shift) : [shiftObject.shift];
+                        });
                     });
-                });
-
-                component.state.dateRange.daysOfWeek.forEach((dayObject, index) => {
+                }
+                // If shift dates correspond to any day, create shift placeholder.
+                component.state.dateRange.daysOfWeek.forEach((dayObject) => {
                     let shiftsList = [];
 
                     if (shiftMapping[dayObject.date]) {
@@ -104,19 +127,20 @@ export const Calendar = React.createClass({
                                                  onClick={() => component.props.shiftClick(shift)}>{shift.name}</div>);
                         });
                     }
-
+                    // If shift doesn't exist for this day, put day placeholder with empty shifts' array.
                     daysOfWeekArray.push(<div
                         className={isCurrentDate(dayObject) ? 'shift-column day-column current-day' : 'day-column shift-column'}
-                        onClick={() => dayColumnHandle(dayObject, true)}
+                        onClick={() => dayColumnHandle(dayObject)}
                         key={Core.getUniqueId()}>
                         {shiftsList}
                     </div>);
                 });
             } else {
-                component.state.dateRange.daysOfWeek.forEach((dayObject, index) => {
+                // If employee object doesn't exist build Calendar header row.
+                component.state.dateRange.daysOfWeek.forEach((dayObject) => {
                     daysOfWeekArray.push(<div
                         className={isCurrentDate(dayObject) ? 'day-column current-day' : 'day-column'}
-                        onClick={() => dayColumnHandle(dayObject)}
+                        onClick={() => dayColumnHandle(dayObject, true)}
                         key={Core.getUniqueId()}>
                         <div className="day-name"
                              key={Core.getUniqueId()}>{dayObject.name}</div>

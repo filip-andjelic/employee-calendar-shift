@@ -23,22 +23,12 @@
 
     .entry-name {
       font-size: $_font-size-large;
+      color: $color_yellow-light;
       font-weight: 900;
       padding: 3px 10px 5px 40px;
     }
-    .avatar {
-      display: flex;
-      flex: 0 0 $avatar-size;
-      width: $avatar-size;
-      height: $avatar-size;
-      justify-content: center;
-      align-items: center;
-      background-color: red;
-      border: 1px solid black;
-      border-radius: 50%;
-      font-size: $_font-size-extra-large;
-    }
     .position-placeholder {
+      display: inline-table;
       max-width: calc(100% - 55px);
       padding: 3px 7px;
       border: 1px solid black;
@@ -60,7 +50,6 @@
     flex: 1 1 0;
     text-align: center;
     padding: 0 5px;
-    margin: 0 2px;
     cursor: pointer;
 
     .day-name {
@@ -84,6 +73,10 @@
     }
     &:not(:last-child) {
       border-right: 1px solid $color_blue-clean;
+    }
+    &.current-day {
+      background-color: $color_yellow-light-rgba;
+      color: $color_gray-dark-rgba;
     }
   }
   .entry-calendar-row {

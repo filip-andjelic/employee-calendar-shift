@@ -23,17 +23,8 @@
       font-weight: 900;
       padding: 3px 10px 5px 50px;
     }
-    .avatar {
-      display: flex;
-      flex: 0 0 $avatar-size;
-      width: $avatar-size;
-      height: $avatar-size;
-      justify-content: center;
-      align-items: center;
-      background-color: red;
-      border: 1px solid black;
-      border-radius: 50%;
-      font-size: $_font-size-extra-large;
+    .position-placeholder {
+      display: inline-table;
     }
     .actions-info {
       flex: 0 0 calc(100% - (#{$avatar-size} + 2px));
@@ -66,9 +57,89 @@
       width: 100%;
       height: 100%;
     }
-    // Section for employee specific styles
-    .employee-entry {
+    .entry-creation-wrapper {
+      border: 1px solid $color_blue-light;
+      border-radius: 4px;
+      padding: 5px 10px;
+      margin-bottom: 20px;
 
+      .section-header {
+        font-size: $_font-size-small !important;
+
+        i {
+          font-size: 18px !important;
+        }
+      }
+      .section-container {
+        box-shadow: 0px 55px 80px -75px $color_blue-light inset;
+      }
+      .entry-row {
+        padding: 5px;
+
+        .color-picker {
+          display: flex;
+          flex-wrap: wrap;
+          flex: 1 1 50%;
+          max-width: 50%;
+
+          .color-placeholder {
+            flex: 0 0 20px;
+            margin-right: 7px;
+            margin-bottom: 3px;
+
+            * {
+              width: 20px;
+              height: 20px;
+              border-radius: 50%;
+            }
+          }
+        }
+        input {
+          flex: 1 1 48%;
+          max-width: 48%;
+          box-sizing: border-box;
+          margin-left: 5px;
+          padding-left: 7px;
+          border-radius: 4px;
+          color: black;
+          align-self: self-start;
+
+          &[type="textarea"] {
+            height: 40px;
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-start;
+          }
+          &[type="date"] {
+            margin-left: 52%;
+          }
+        }
+        .employee-picker, .avatar-picker, .position-picker {
+          display: flex;
+          flex: 1 1 50%;
+          max-width: 50%;
+          flex-wrap: wrap;
+          margin: 5px 0;
+        }
+        .avatar-placeholder {
+          margin: 0 5px 5px 0;
+        }
+        .picked-item {
+          transform: scale(0.7);
+        }
+      }
+      .employee-entry {
+        .entry-row {
+          input[type="text"] {
+            max-width: 100%;
+            flex: 1 1 100%;
+            margin-top: 10px;
+          }
+        }
+      }
+    }
+    .error-message-wrapper {
+      color: $color_red-whitened;
     }
     // Section for shift specific styles
     .shift-entry {
@@ -78,10 +149,6 @@
         overflow: hidden;
         box-sizing: border-box;
       }
-    }
-    // Section for position specific styles
-    .position-entry {
-
     }
 
     &:last-child {

@@ -1,23 +1,29 @@
 import React from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import {connect} from 'react-redux';
-import Actions from '../core/action_creators';
+import {Actions}  from '../core/action_creators';
 import {Core} from '../core/core';
 import {LeftSidebar} from '../components/LeftSidebar';
 import {RightSidebar} from '../components/RightSidebar';
 import {Calendar} from '../components/Calendar';
 
+const moment = Core.moment;
+const dateFormat = Core.dateFormat;
+
+function handleUpdate() {
+
+}
 function bindListerToLocalState(component) {
     isListenerAttached = true;
 
     Core.store.subscribe(() => {
         let newState = Core.getCurrentState();
-        console.log(Core.store.getState());
-        console.log(Core.getCurrentState());
 
-        component.state.shifts = newState.get('shifts');
-        component.state.positions = newState.get('positions');
-        component.state.employees = newState.get('employees');
+        component.setState({'shifts': newState.get('shifts')});
+        component.setState({'positions': newState.get('positions')});
+        component.setState({'employees': newState.get('employees')});
+        component.setState({'reloadRender': !component.state.reloadRender});
+        component.setState({'refreshNewEntry': false});
     });
 }
 
@@ -32,6 +38,8 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         handleShift: function(entry, shouldDelete) {
+            entry.date = moment(entry.date).format(dateFormat);
+
             return dispatch(Actions.setShift(entry, shouldDelete));
         },
         handlePosition: function(entry, shouldDelete) {
@@ -55,12 +63,15 @@ export const CalendarPage = React.createClass({
             handlers: {
                 shift: (shift, shouldDelete) => {
                     this.props.handleShift(shift, shouldDelete);
+                    this.setState({'refreshNewEntry': true});
                 },
                 position: (position, shouldDelete) => {
                     this.props.handlePosition(position, shouldDelete);
+                    this.setState({'refreshNewEntry': true});
                 },
                 employee: (employee, shouldDelete) => {
                     this.props.handleEmployee(employee, shouldDelete);
+                    this.setState({'refreshNewEntry': true});
                 }
             },
             filterHandlers: {
@@ -95,12 +106,14 @@ export const CalendarPage = React.createClass({
                     <LeftSidebar shifts={this.state.shifts}
                                  positions={this.state.positions}
                                  employees={this.state.employees}
-                                 handlers={this.state.handlers}/>
+                                 handlers={this.state.handlers}
+                                 refresh={this.state.refreshNewEntry}/>
                 </div>
                 <div className="border-less page-section central-page-section">
                     <Calendar employeeClick={this.state.calendarHandlers.employee}
                               shiftClick={this.state.calendarHandlers.shift}
-                              employees={this.state.employees}/>
+                              employees={this.state.employees}
+                              reload={this.state.reloadRender}/>
                 </div>
                 <div className="border-less page-section">
                     <RightSidebar shifts={this.state.shifts}

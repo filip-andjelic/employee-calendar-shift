@@ -20,30 +20,28 @@ function setState(state) {
     };
 }
 // Employee data update
-function setEmployee(state, employee, shouldDelete) {
+function setEmployee(employee, shouldDelete) {
     return {
         type: ACTION_TYPES.employee,
         employee,
         shouldDelete,
-        state
+        
     };
 }
 // Shift data update
-function setShift(state, shift, shouldDelete) {
+function setShift(shift, shouldDelete) {
     return {
         type: ACTION_TYPES.shift,
         shift,
-        shouldDelete,
-        state
+        shouldDelete
     };
 }
 // Position data update
-function setPosition(state, position, shouldDelete) {
+function setPosition(position, shouldDelete) {
     return {
         type: ACTION_TYPES.position,
         position,
-        shouldDelete,
-        state
+        shouldDelete
     };
 }
 

@@ -1,6 +1,58 @@
 import React from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import {List, Map} from 'immutable';
+import {Map} from 'immutable';
+import {NewEntry} from './NewEntry';
+
+function validateNewEntry(type, entry) {
+    let message = '';
+
+    switch(type) {
+        case 'shift':
+            if (!entry.name) {
+                message += '`name`,';
+            }
+            if (!entry.date) {
+                message += ' `date`,';
+            }
+            if (!entry.color) {
+                message += ' `color`,';
+            }
+            if (!entry.employees || !entry.employees[0]) {
+                message += ' `employees`,';
+            }
+            if (message) {
+                message += ' field(s) can\'t be empty!';
+            }
+            break;
+        case 'employee':
+            if (!entry.name) {
+                message += '`name`,';
+            }
+            if (!entry.avatarClass) {
+                message += ' `avatar class`,';
+            }
+            if (!entry.position || !entry.position.id) {
+                message += ' `position`,';
+            }
+            if (message) {
+                message += ' field(s) can\'t be empty!';
+            }
+            break;
+        case 'position':
+            if (!entry.name) {
+                message += '`name`,';
+            }
+            if (!entry.color) {
+                message += ' `color`,';
+            }
+            if (message) {
+                message += ' field(s) can\'t be empty!';
+            }
+            break;
+    }
+
+    return message;
+}
 
 export const LeftSidebar = React.createClass({
     mixins: [PureRenderMixin],
@@ -14,6 +66,13 @@ export const LeftSidebar = React.createClass({
                 shift: false,
                 position: false
             },
+            creationState: {
+                employee: false,
+                shift: false,
+                position: false
+            },
+            newEntry: {},
+            errorMessage: '',
             sectionAccordionHandle: (section) => {
                 let currentState = this.state.accordionState;
 
@@ -21,6 +80,39 @@ export const LeftSidebar = React.createClass({
 
                 this.setState({'accordionState': currentState});
                 this.setState({'reloadRender': !this.state.reloadRender});
+            },
+            creationAccordionHandle: (section) => {
+                let currentState = this.state.creationState;
+
+                if (currentState) {
+                    let validationMessage = validateNewEntry(section, this.state.newEntry);
+
+                    if (currentState[section]) {
+                        if (validationMessage) {
+                            this.setState({'errorMessage': false});
+                            this.setState({'errorMessage': validationMessage});
+
+                            return;
+                        } else {
+                            this.props.handlers[section](this.state.newEntry);
+                        }
+
+                    }
+
+                    currentState[section] = !currentState[section];
+
+                    this.setState({'errorMessage': ''});
+                    this.setState({'newEntry': {}});
+                    this.setState({'creationState': currentState});
+                    this.setState({'reloadRender': !this.state.reloadRender});
+                }
+            },
+            updateModel: (value, property) => {
+                let currentModel = this.state.newEntry;
+
+                currentModel[property] = value;
+
+                this.setState({'newEntry': currentModel});
             },
             handleEdit: (entryType, isEditingFinished, entry) => {
                 if (!isEditingFinished) {
@@ -147,6 +239,17 @@ export const LeftSidebar = React.createClass({
                 </div>
                 <div className="section-container"
                      style={{'display': this.state.accordionState.employee ? 'block' : 'none'}}>
+                    <div className="entry-creation-wrapper employee-entry-creation">
+                        <div className="section-header" onClick={() => this.state.creationAccordionHandle('employee')}>
+                            <span>{!this.state.creationState.employee ? 'Create ' : 'Save '} Employee Entry</span>
+                            <i className={this.state.creationState.employee ? 'fa fa-check success-status' : 'fa fa-plus'}/>
+                        </div>
+                        <div className="section-container"
+                             style={{'display': this.state.creationState.employee ? 'block' : 'none'}}>
+                            <NewEntry modelChange={this.state.updateModel} type="employee" refresh={this.props.refresh}/>
+                            <div className="error-message-wrapper">{this.state.errorMessage}</div>
+                        </div>
+                    </div>
                     {employeeList}
                 </div>
             </div>
@@ -157,6 +260,17 @@ export const LeftSidebar = React.createClass({
                 </div>
                 <div className="section-container"
                      style={{'display': this.state.accordionState.shift ? 'block' : 'none'}}>
+                    <div className="entry-creation-wrapper shift-entry-creation">
+                        <div className="section-header" onClick={() => this.state.creationAccordionHandle('shift')}>
+                            <span>{!this.state.creationState.shift ? 'Create ' : 'Save '} Shift Entry</span>
+                            <i className={this.state.creationState.shift ? 'fa fa-check success-status' : 'fa fa-plus'}/>
+                        </div>
+                        <div className="section-container"
+                             style={{'display': this.state.creationState.shift ? 'block' : 'none'}}>
+                            <NewEntry modelChange={this.state.updateModel} type="shift" refresh={this.props.refresh}/>
+                            <div className="error-message-wrapper">{this.state.errorMessage}</div>
+                        </div>
+                    </div>
                     {shiftList}
                 </div>
             </div>

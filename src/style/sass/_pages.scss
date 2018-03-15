@@ -76,13 +76,21 @@
     }
     .employee-entry, .employee-placeholder {
       .entry-name {
-        color: $color_orange-light;
+        color: $color_yellow-light;
       }
     }
-    .position-entry, .position-placeholder {
-      .entry-name {
-        color: $color_brown-deep;
-      }
+    .avatar {
+      display: flex;
+      flex: 0 0 $avatar-size;
+      width: $avatar-size;
+      height: $avatar-size;
+      justify-content: center;
+      align-items: center;
+      background-color: $color_yellow-light;
+      color: $color_gray-dark-rgba;
+      border: 1px solid $color_gray-dark-rgba;
+      border-radius: 50%;
+      font-size: $_font-size-extra-large;
     }
     .sidebar-section {
       flex: 0 0 100%;
@@ -109,14 +117,23 @@
       border: 1px solid black;
       border-radius: 6px;
       margin-bottom: 5px;
+      color: black;
+    }
+    .shift-placeholder {
+      color: black;
     }
     .employee-placeholder {
       padding: 3px 7px;
-      border: 1px solid black;
+      border: 1px solid $color_gray-dark-rgba;
       border-radius: 6px;
-      background-color: green;
+      background-color: $color_yellow-light;
+      color: $color_gray-dark-rgba;
       margin-bottom: 5px;
       margin-right: 5px;
+
+      i {
+        margin-right: 3px;
+      }
     }
     .shift-color, .position-color {
       width: $avatar-size;

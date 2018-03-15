@@ -6,11 +6,11 @@ export default function(state, action) {
         case Actions.ACTION_TYPES.state:
             return Core.setState(action.state);
         case Actions.ACTION_TYPES.employee:
-            return Core.setEmployee(action.state, action.employee, action.shouldDelete);
+            return Core.setEmployee(action.employee, action.shouldDelete);
         case Actions.ACTION_TYPES.shift:
-            return Core.setShift(action.state, action.shift, action.shouldDelete);
+            return Core.setShift(action.shift, action.shouldDelete);
         case Actions.ACTION_TYPES.position:
-            return Core.setPosition(action.state, action.position, action.shouldDelete);
+            return Core.setPosition(action.position, action.shouldDelete);
         default:
             return state;
     }
