@@ -138,12 +138,12 @@ export const LeftSidebar = React.createClass({
                 switch (type) {
                     case 'employees':
                         arrayOfChildren.push(<div className={parent + "-" + type + " employee-placeholder text-ellipsis icon-" + entry.avatarClass}
-                                                  key={parent + "-" + type + id + entry.id}>{entry.name}</div>);
+                                                  key={Core.getUniqueId()}>{entry.name}</div>);
                         break;
                     case 'positions':
                         arrayOfChildren.push(<div className={parent + "-" + type + " position-placeholder text-ellipsis background-" + entry.color}
                                                   style={{'backgroundColor': entry.color}}
-                                                  key={parent + "-" + type + id + entry.id}>{entry.name}</div>);
+                                                  key={Core.getUniqueId()}>{entry.name}</div>);
                         break;
                 }
             });
@@ -153,7 +153,7 @@ export const LeftSidebar = React.createClass({
         function getShiftOptions() {
             let shiftOptions = [];
 
-            shiftOptions.push(<option value="-1" key={Core.getUniqueId()}>Undo this action ...</option>);
+            shiftOptions.push(<option value="-1" key={Core.getUniqueId()}>No shift picked</option>);
 
             component.props.shifts.forEach(function(entry) {
                 shiftOptions.push(<option value={entry.id} key={Core.getUniqueId()}>{entry.name}</option>);
@@ -169,76 +169,80 @@ export const LeftSidebar = React.createClass({
 
         component.props.employees.forEach(function(entry, id) {
             employeeList.push(<div className={'employee-' + id + ' employee-entry sidebar-entry'}
-                                   key={'employee-' + id}>
-                <div className="entry-row" key={'employee-row' + id}>
-                    <div className="avatar" key={'employee-avatar' + id}>
-                        <i className={'fa fa-' + entry.avatarClass} key={'employee-image' + id}/>
+                                   key={Core.getUniqueId()}>
+                <div className="entry-row" key={Core.getUniqueId()}>
+                    <div className="avatar" key={Core.getUniqueId()}>
+                        <i className={'fa fa-' + entry.avatarClass} key={Core.getUniqueId()}/>
                     </div>
-                    <div className="actions-info" key={'employee-info' + id}>
-                        <div className="entry-actions" key={'employee-actions' + id}>
+                    <div className="actions-info" key={Core.getUniqueId()}>
+                        <div className="entry-actions" key={Core.getUniqueId()}>
                             <i className={component.state.isEditing.get('employee-' + id) ? 'fa fa-check success-status' : 'fa fa-pencil'}
                                onClick={() => component.state.handleEdit('employee', component.state.isEditing.get('employee-' + id), entry)}
-                               key={'employee-edit' + id}/>
+                               key={Core.getUniqueId()}/>
                             <i className="fa fa-trash"
                                onClick={() => component.state.handleDelete('employee', entry)}
-                               key={'employee-delete' + id}/>
+                               key={Core.getUniqueId()}/>
                         </div>
-                        <div className="entry-info" key={'employee-position' + id}>
+                        <div className="entry-info" key={Core.getUniqueId()}>
                             {makeArrayOfChildren([entry.position], 'positions', 'emplyee', id)}
                         </div>
                     </div>
-                    <div className="entry-name" key={'employee-name' + id}>{entry.name}</div>
+                    <div className="entry-name" key={Core.getUniqueId()}>{entry.name}</div>
                 </div>
             </div>);
         });
         component.props.shifts.forEach(function(entry, id) {
-            shiftList.push(<div className={'shift-' + id + ' shift-entry sidebar-entry'} key={'shift-' + id}>
-                <div className="entry-row" key={'shift-row' + id}>
-                    <div className="shift-color" key={'shift-shift-color' + id}>
+            shiftList.push(<div className={'shift-' + id + ' shift-entry sidebar-entry'} key={Core.getUniqueId()}>
+                <div className="entry-row" key={Core.getUniqueId()}>
+                    <div className="shift-color" key={Core.getUniqueId()}>
                         <div className={'picked-color background-' + entry.color}
-                             style={{'backgroundColor': entry.color}}/>
+                             style={{'backgroundColor': entry.color}}
+                             key={Core.getUniqueId()}/>
                     </div>
-                    <div className="entry-actions" key={'shift-actions' + id}>
+                    <div className="entry-actions" key={Core.getUniqueId()}>
                         <i className={component.state.isEditing.get('shift-' + id) ? 'fa fa-check success-status' : 'fa fa-pencil'}
                            onClick={() => component.state.handleEdit('shift', component.state.isEditing.get('shift-' + id), entry)}
-                           key={'shift-edit' + id}/>
+                           key={Core.getUniqueId()}/>
                         <i className="fa fa-trash"
                            onClick={() => component.state.handleDelete('shift', entry)}
-                           key={'shift-delete' + id}/>
+                           key={Core.getUniqueId()}/>
                     </div>
-                    <div className="shift-positions-wrapper" key={'shift-positions' + id}>
-                        {makeArrayOfChildren(entry.positions, 'positions', 'shift', id)}
+                    <div className="list-references-wrapper">
+                        <div className="shift-positions-wrapper" key={Core.getUniqueId()}>
+                            {makeArrayOfChildren(entry.positions, 'positions', 'shift', id)}
+                        </div>
+                        <div className="shift-employees-wrapper" key={Core.getUniqueId()}>
+                            {makeArrayOfChildren(entry.employees, 'employees', 'shift', id)}
+                        </div>
                     </div>
-                    <div className="shift-employees-wrapper" key={'shift-employees' + id}>
-                        {makeArrayOfChildren(entry.employees, 'employees', 'shift', id)}
-                    </div>
-                    <div className="entry-name shift-name" key={'shift-name' + id}>{entry.name}</div>
-                    <div className="shift-description" key={'shift-description' + id}>{entry.description}</div>
+                    <div className="entry-name shift-name" key={Core.getUniqueId()}>{entry.name}</div>
+                    <div className="shift-description" key={Core.getUniqueId()}>{entry.description}</div>
                 </div>
             </div>);
         });
         component.props.positions.forEach(function(entry, id) {
             positionList.push(<div className={'position-' + id + ' position-entry sidebar-entry'}
-                                   key={'position-' + id}>
-                <div className="entry-row" key={'position-row' + id}>
-                    <div className="position-color" key={'position-position-color' + id}>
+                                   key={Core.getUniqueId()}>
+                <div className="entry-row" key={Core.getUniqueId()}>
+                    <div className="position-color" key={Core.getUniqueId()}>
                         <div className={'picked-color background-' + entry.color}
-                             style={{'backgroundColor': entry.color}}/>
+                             style={{'backgroundColor': entry.color}}
+                             key={Core.getUniqueId()}/>
                     </div>
-                    <div className="actions-info" key={'position-info' + id}>
-                        <div className="entry-actions position-actions" key={'position-actions' + id}>
+                    <div className="actions-info" key={Core.getUniqueId()}>
+                        <div className="entry-actions position-actions" key={Core.getUniqueId()}>
                             <i className={component.state.isEditing.get('position-' + id) ? 'fa fa-check success-status' : 'fa fa-pencil'}
                                onClick={() => component.state.handleEdit('position', component.state.isEditing.get('position-' + id), entry)}
-                               key={'position-edit' + id}/>
+                               key={Core.getUniqueId()}/>
                             <i className="fa fa-trash"
                                onClick={() => component.state.handleDelete('position', entry)}
-                               key={'position-delete' + id}/>
+                               key={Core.getUniqueId()}/>
                         </div>
-                        <div className="entry-info position-employees" key={'position-employees' + id}>
+                        <div className="entry-info position-employees" key={Core.getUniqueId()}>
                             {makeArrayOfChildren(entry.employees, 'employees', 'position', id)}
                         </div>
                     </div>
-                    <div className="entry-name position-name" key={'position-name' + id}>{entry.name}</div>
+                    <div className="entry-name position-name" key={Core.getUniqueId()}>{entry.name}</div>
                 </div>
             </div>);
         });
@@ -251,7 +255,7 @@ export const LeftSidebar = React.createClass({
                 </div>
                 <div className="section-container"
                      style={{'display': this.state.accordionState.employee ? 'block' : 'none'}}>
-                    <div className="entry-creation-wrapper employee-entry-creation">
+                    <div className={(this.state.creationState.employee ? "opened-accordion " : "") + "entry-creation-wrapper employee-entry-creation"}>
                         <div className="section-header" onClick={() => this.state.creationAccordionHandle('employee')}>
                             <span>{!this.state.creationState.employee ? 'Create ' : 'Save '} Employee Entry</span>
                             <i className={this.state.creationState.employee ? 'fa fa-check success-status' : 'fa fa-plus'}/>
@@ -274,12 +278,13 @@ export const LeftSidebar = React.createClass({
                      style={{'display': this.props.shiftPicker.display ? 'block' : 'none'}}>
                     <div className="entry-creation-wrapper shift-entry-creation shift-picker-wrapper">
                         <select onChange={(e) => this.props.shiftPicker.handle(e.target.value)}>{getShiftOptions()}</select>
-                        <input type="text" disabled value={this.props.shiftPicker.date.date + '/' + this.props.shiftPicker.date.name} />
+                        <div className="shift-picker-button" onClick={(e) => this.props.shiftPicker.handle(null, true)}>Pick this shift</div>
+                        <input type="text" disabled value={this.props.shiftPicker.date.date + ' - ' + this.props.shiftPicker.date.name} />
                     </div>
                 </div>
                 <div className="section-container"
                      style={{'display': this.state.accordionState.shift ? 'block' : 'none'}}>
-                    <div className="entry-creation-wrapper shift-entry-creation">
+                    <div className={(this.state.creationState.shift ? "opened-accordion " : "") + "entry-creation-wrapper shift-entry-creation"}>
                         <div className="section-header" onClick={() => this.state.creationAccordionHandle('shift')}>
                             <span>{!this.state.creationState.shift ? 'Create ' : 'Save '} Shift Entry</span>
                             <i className={this.state.creationState.shift ? 'fa fa-check success-status' : 'fa fa-plus'}/>
@@ -300,7 +305,7 @@ export const LeftSidebar = React.createClass({
                 </div>
                 <div className="section-container"
                      style={{'display': this.state.accordionState.position ? 'block' : 'none'}}>
-                    <div className="entry-creation-wrapper position-entry-creation">
+                    <div className={(this.state.creationState.position ? "opened-accordion " : "") + "entry-creation-wrapper position-entry-creation"}>
                         <div className="section-header" onClick={() => this.state.creationAccordionHandle('position')}>
                             <span>{!this.state.creationState.position ? 'Create ' : 'Save '} Position Entry</span>
                             <i className={this.state.creationState.position ? 'fa fa-check success-status' : 'fa fa-plus'}/>

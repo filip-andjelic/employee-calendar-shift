@@ -22,6 +22,7 @@
       font-size: $_font-size-large;
       font-weight: 900;
       padding: 3px 10px 5px 50px;
+      min-width: 50px;
 
       &.shift-name {
         margin-top: 10px;
@@ -35,19 +36,20 @@
       display: flex;
       flex-wrap: wrap;
     }
-    .entry-actions > * {
-      font-size: $_font-size-large;
-      margin: 7px;
-      cursor: pointer;
+    .entry-actions {
+      flex: 1 1 60px;
+
+      & > * {
+        font-size: $_font-size-large;
+        margin: 7px;
+        cursor: pointer;
+      }
     }
     .entry-info {
       display: flex;
-      flex: 1 1 0;
+      flex: 1 1 calc(100% - #{$avatar-size} - 62px);
       margin: 5px 7px;
 
-      .employee-placeholder {
-        max-width: calc((100% - #{$avatar-size} - 10px) / 2);
-      }
       &.position-employees {
         flex-wrap: wrap;
       }
@@ -56,10 +58,9 @@
       margin-top: 10px;
       padding-left: 10px;
       padding-top: 7px;
-      border-left: 1px solid $color_blue-light;
       word-wrap: break-word;
       word-break: break-all;
-      max-width: 49%;
+      max-width: 47%;
     }
     .picked-color {
       width: 100%;
@@ -68,6 +69,7 @@
     .shift-picker-wrapper {
       display: flex;
       flex-wrap: wrap;
+      justify-content: space-between;
 
       select {
         background-color: $color_gray-dark-rgba;
@@ -76,12 +78,21 @@
         margin-right: 10px;
       }
       input {
-        flex: 1 1 0;
-        max-width: 140px;
+        flex: 1 1 100%;
+        margin-top: 10px;
         padding: 3px;
         border-radius: 4px;
         color: $color_blue-clean;
         text-align: center;
+      }
+      .shift-picker-button {
+        padding: 3px 7px;
+        border: 1px solid black;
+        border-radius: 6px;
+        color: black;
+        margin: 5px 0 0 5px;
+        cursor: pointer;
+        background-color: $color_blue-clean;
       }
     }
     .entry-creation-wrapper {
@@ -113,6 +124,7 @@
             flex: 0 0 20px;
             margin-right: 7px;
             margin-bottom: 3px;
+            cursor: pointer;
 
             * {
               width: 20px;
@@ -122,8 +134,8 @@
           }
         }
         input {
-          flex: 1 1 48%;
-          max-width: 48%;
+          flex: 1 1 calc(50% - 6px);
+          max-width: calc(50% - 6px);
           box-sizing: border-box;
           margin-left: 5px;
           padding-left: 7px;
@@ -138,7 +150,10 @@
             align-items: flex-start;
           }
           &[type="date"] {
-            margin-left: 52%;
+            width: 100%;
+            flex: 1 1 100%;
+            max-width: 100%;
+            text-align: center;
           }
         }
         .employee-picker, .avatar-picker, .position-picker {
@@ -147,6 +162,15 @@
           max-width: 50%;
           flex-wrap: wrap;
           margin: 5px 0;
+        }
+        .employee-picker {
+          & .employee-placeholder {
+            cursor: pointer;
+
+            & > span {
+              word-break: break-all;
+            }
+          }
         }
         .avatar-placeholder {
           margin: 0 5px 5px 0;
@@ -172,6 +196,16 @@
     .error-message-wrapper {
       color: $color_red-whitened;
     }
+    .list-references-wrapper {
+      flex: 1 1 calc(100% - #{$avatar-size} - 66px);
+      display: flex;
+
+      .shift-positions-wrapper, .shift-employees-wrapper {
+        flex: 1 1 50%;
+        box-sizing: border-box;
+        margin-left: 5px;
+      }
+    }
     // Section for shift specific styles
     .shift-entry {
       .entry-name {
@@ -179,6 +213,18 @@
         text-overflow: ellipsis;
         overflow: hidden;
         box-sizing: border-box;
+      }
+    }
+    // Section for position specific styles
+    .position-entry {
+      .entry-name {
+        border-right: none !important;
+      }
+    }
+    // Section for employee specific styles
+    .employee-entry {
+      .entry-name {
+        border-right: none !important;
       }
     }
 

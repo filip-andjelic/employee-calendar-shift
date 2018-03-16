@@ -1,6 +1,7 @@
 import React from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import {connect} from 'react-redux';
+import {List} from 'immutable';
 import {Actions}  from '../core/action_creators';
 import {Core} from '../core/core';
 import {LeftSidebar} from '../components/LeftSidebar';
@@ -37,10 +38,10 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        handleShift: function(entry, shouldDelete) {
+        handleShift: function(entry, shouldDelete, specificEmployee) {
             entry.date = moment(entry.date).format(dateFormat);
 
-            return dispatch(Actions.setShift(entry, shouldDelete));
+            return dispatch(Actions.setShift(entry, shouldDelete, specificEmployee));
         },
         handlePosition: function(entry, shouldDelete) {
             return dispatch(Actions.setPosition(entry, shouldDelete));
@@ -63,27 +64,55 @@ export const CalendarPage = React.createClass({
             shiftPicker: {
                 display: false,
                 date: '',
-                handle: (shiftId) => {
-                    if (shiftId === '-1') {
+                handle: (shiftId, save) => {
+                    let picker = this.state.shiftPicker;
 
-                    } else {
+                    if (save) {
+                        if (picker.shiftId) {
+                            let entry = this.state.shifts.get(picker.shiftId);
 
+                            entry.date = picker.date;
+                            if (entry.employees && !entry.employees.filter((emp) => {return emp.id === picker.employee.id})[0]) {
+                                entry.employees.push(picker.employee);
+                            }
+
+                            this.props.handleShift(entry, false, picker.employee.id);
+                        }
+
+                        picker.display = false;
+                        picker.date = '';
+                        picker.shiftId = null;
+                        picker.employee = null;
+
+                        this.setState({'shiftPicker': picker});
+
+                        return;
                     }
-                    debugger;
+
+                    if (shiftId === '-1') {
+                        picker.shiftId = null;
+                    } else if (shiftId) {
+                        picker.shiftId = shiftId;
+                    }
+
+                    this.setState({'shiftPicker': picker});
                 }
             },
             handlers: {
                 shift: (shift, shouldDelete) => {
                     this.props.handleShift(shift, shouldDelete);
                     this.setState({'refreshNewEntry': true});
+                    this.setState({'refreshNewEntry': false});
                 },
                 position: (position, shouldDelete) => {
                     this.props.handlePosition(position, shouldDelete);
                     this.setState({'refreshNewEntry': true});
+                    this.setState({'refreshNewEntry': false});
                 },
                 employee: (employee, shouldDelete) => {
                     this.props.handleEmployee(employee, shouldDelete);
                     this.setState({'refreshNewEntry': true});
+                    this.setState({'refreshNewEntry': false});
                 }
             },
             filterHandlers: {
@@ -109,7 +138,7 @@ export const CalendarPage = React.createClass({
 
                     shiftPicker.display = true;
                     shiftPicker.date = day;
-                    shiftPicker.employee = employee;
+                    shiftPicker.employee = Core.getEmployees().get(employee.id);
 
                     this.setState({'shiftPicker': shiftPicker});
                     this.setState({'refreshNewEntry': true});

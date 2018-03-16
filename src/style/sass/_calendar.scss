@@ -9,6 +9,10 @@
   }
   .calendar-body {
     margin-bottom: 60px;
+
+    .day-column {
+      padding-bottom: 25px;
+    }
   }
   .entry-placeholder {
     flex: 0 0 220px;
@@ -27,6 +31,8 @@
       color: $color_yellow-light;
       font-weight: 900;
       padding: 3px 10px 5px 40px;
+      box-sizing: border-box;
+      word-break: break-all;
     }
     .position-placeholder {
       display: inline-table;
@@ -46,15 +52,24 @@
     justify-content: space-around;
     align-items: center;
     font-size: 30px;
+
+    i {
+      transition: all 0.4s;
+      &:hover {
+        transform: scale(1.2);
+        color: $color_blue-deep;
+      }
+    }
   }
   .day-column {
     flex: 1 1 0;
     text-align: center;
     padding: 0 5px;
+    max-width: calc((93% - 220px) / 7);
     cursor: pointer;
 
     .day-name {
-      font-size: $_font-size-large;
+      font-size: $_font-size-small;
       text-decoration: underline;
       font-style: italic;
     }
@@ -64,6 +79,7 @@
     .shift-entry {
       max-width: 100%;
       display: flex;
+      word-break: break-all;
       justify-content: center;
       align-items: center;
       padding: 3px 5px;

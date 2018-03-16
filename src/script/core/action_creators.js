@@ -29,11 +29,12 @@ function setEmployee(employee, shouldDelete) {
     };
 }
 // Shift data update
-function setShift(shift, shouldDelete) {
+function setShift(shift, shouldDelete, specificEmployee) {
     return {
         type: ACTION_TYPES.shift,
         shift,
-        shouldDelete
+        shouldDelete,
+        specificEmployee
     };
 }
 // Position data update

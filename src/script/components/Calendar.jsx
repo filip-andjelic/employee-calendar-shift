@@ -110,7 +110,11 @@ export const Calendar = React.createClass({
                 if (shifts) {
                     shifts.forEach((shiftObject) => {
                         shiftObject.dates.forEach((date) => {
-                            shiftMapping[date] = shiftMapping[date] ? shiftMapping[date].push(shiftObject.shift) : [shiftObject.shift];
+                            if (!shiftMapping[date]) {
+                                shiftMapping[date] = [shiftObject.shift];
+                            } else {
+                                shiftMapping[date].push(shiftObject.shift)
+                            }
                         });
                     });
                 }

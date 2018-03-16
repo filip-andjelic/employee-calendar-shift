@@ -8,7 +8,7 @@
     width: 100%;
     border: 1px solid rgba(133, 221, 255, 0.6);
     box-shadow: 0 0 40px 10px rgba(133, 221, 255, 0.7);
-    padding: 30px;
+    padding: 30px 5px;
     background-color: rgba(133, 221, 255, 0.2);
 
     .page-content {
@@ -33,6 +33,8 @@
             border-right: none;
           }
         }
+
+        @import 'media-responsive';
       }
     }
     .user-input-element{
@@ -111,6 +113,10 @@
         padding-bottom: 7px;
         margin-bottom: 7px;
       }
+      .entry-name {
+        word-break: break-word;
+        border-right: 1px solid $color_blue-clean;
+      }
       &:not(:last-child) {
         border-bottom: 1px solid $color_blue-clean;
       }
@@ -122,6 +128,7 @@
       margin-bottom: 5px;
       margin-right: 5px;
       color: black;
+      word-break: break-word;
     }
     .employee-placeholder {
       padding: 3px 7px;
@@ -131,6 +138,7 @@
       color: $color_gray-dark-rgba;
       margin-bottom: 5px;
       margin-right: 5px;
+      word-break: break-word;
 
       i {
         margin-right: 3px;
@@ -139,6 +147,7 @@
     .shift-color, .position-color {
       width: $avatar-size;
       height: $avatar-size;
+      flex: 0 0 $avatar-size;
       border-radius: 50%;
       border: 1px solid black;
       overflow: hidden;
@@ -146,12 +155,6 @@
     .shift-positions-wrapper, .shift-employees-wrapper {
       display: flex;
       flex-direction: column;
-      width: calc((100% - #{$avatar-size} - 100px) / 2);
-      margin-left: 10px;
-    }
-    .shift-employees-wrapper {
-      padding-left: 10px;
-      border-left: 1px solid $color_blue-light;
     }
   }
 }

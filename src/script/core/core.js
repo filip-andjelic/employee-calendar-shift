@@ -3,6 +3,7 @@ import {createStore} from 'redux';
 import io from 'socket.io-client';
 import reducer from './reducer';
 import {Actions} from './action_creators';
+import {Data} from './mockData';
 
 /***** SETTER FUNCTIONS *******/
 
@@ -32,13 +33,13 @@ function setEmployee(employee, shouldDelete) {
 
 // Updates shift entry or deletes it
 // Emits event to server to mirror state update
-function setShift(shift, shouldDelete) {
+function setShift(shift, shouldDelete, specificEmployee) {
     let updatedShifts = new Map();
 
     if (shouldDelete) {
         updatedShifts = shiftApi.deleteShift(currentState, shift);
     } else {
-        updatedShifts = shiftApi.updateShift(currentState, shift);
+        updatedShifts = shiftApi.updateShift(currentState, shift, specificEmployee);
     }
 
     currentState = currentState.set('shifts', updatedShifts);
@@ -128,7 +129,7 @@ const employeeApi = {
         let isShiftUpdated = false;
 
         employee.shifts.forEach((object) => {
-            if (object.shift.id === shift.id) {
+            if (object.shift && object.shift.id === shift.id) {
                 isShiftUpdated = true;
 
                 object.dates.push(shift.date);
@@ -155,25 +156,41 @@ const employeeApi = {
     }
 };
 const shiftApi = {
-    updateShift: (state, shift) => {
+    updateShift: (state, shift, existingEmployee) => {
         const shifts = state.get('shifts');
         let employees = [];
         let positions = [];
 
         if (!shift.id) {
             shift.id = generateRandom() + '_shift_id';
+        } else {
+            shift = shifts.get(shift.id);
         }
 
-        shift.employees.forEach((employeeId) => {
-            let employee = state.get('employees').get(employeeId);
-            employees.push(employee);
-            positions.push(employee.position);
+        if (existingEmployee) {
+            let existingEmployeeId = typeof existingEmployee === 'object' ? existingEmployee.id : existingEmployee;
+            let updatedEmployee = shift.employees.filter((emp) => {return emp.id === existingEmployeeId})[0];
 
-            state = employeeApi.updateEmployeeShifts(state, shift, employee);
-        });
+            employees = shift.employees;
+            positions = shift.positions;
 
-        shift.employees = employees;
-        shift.positions = positions;
+            if (!positions.filter((pos) => {return pos.id === updatedEmployee.position.id})[0]) {
+                positions.push(updatedEmployee.position);
+            }
+
+            state = employeeApi.updateEmployeeShifts(state, shift, updatedEmployee);
+        } else {
+            shift.employees.forEach((entry) => {
+                let employee = typeof entry === 'object' ? entry : state.get('employees').get(entry);
+                employees.push(employee);
+                positions.push(employee.position);
+
+                state = employeeApi.updateEmployeeShifts(state, shift, employee);
+            });
+        }
+
+        shift.employees = new List(employees).toArray();
+        shift.positions = new List(positions).toArray();
 
         return shifts.set(shift.id, shift);
     },
@@ -212,105 +229,13 @@ const positionApi = {
         return positions.delete(position.id);
     }
 };
-const mockShiftData = new Map({
-    shift1: {
-        id: 'shift1',
-        name: 'Prva smena',
-        description: 'Tralalalalalalaalalalalal',
-        positions: [{
-            id: 'position1',
-            name: 'Pozicija Prva',
-            color: 'cyan',
-            employees: [{
-                id: 'employee1',
-                name: 'Prvi zaposleni',
-                avatarClass: 'male',
-                position: new Map()
-            }]
-        }, {
-            id: 'position2',
-            name: 'Pozicija Druga',
-            color: 'darkgray',
-            employees: [{
-                id: 'employee2',
-                name: 'Drugi zaposleni',
-                avatarClass: 'female',
-                position: {},
-                shift: new Map()
-            }]
-        }],
-        employees: [{
-            id: 'employee1',
-            name: 'Prvi zaposleni',
-            avatarClass: 'male',
-            position: {},
-            shifts: [new Map()]
-        }, {
-            id: 'employee2',
-            name: 'Drugi zaposleni',
-            avatarClass: 'female',
-            position: {},
-            shifts: [new Map()]
-        }],
-        color: 'crimson'
-    }
-});
-const mockPositionData = new Map({
-    position1: {
-        id: 'position1',
-        name: 'Pozicija Prva',
-        color: 'cyan',
-        employees: [{
-            id: 'employee1',
-            name: 'Prvi zaposleni',
-            avatarClass: 'male',
-            position: new Map()
-        }, {
-            id: 'employee2',
-            name: 'Drugi zaposleni',
-            avatarClass: 'female',
-            position: {},
-            shift: new Map()
-        }]
-    },
-    position2: {
-        id: 'position2',
-        name: 'Pozicija Druga',
-        color: 'dodgerblue',
-        employees: [{
-            id: 'employee2',
-            name: 'Drugi zaposleni',
-            avatarClass: 'female',
-            position: {},
-            shift: new Map()
-        }]
-    }
-});
-const mockEmployeeData = new Map({
-    employee1: {
-        id: 'employee1',
-        name: 'Prvi zaposleni',
-        avatarClass: 'male',
-        position: mockPositionData.get('position1'),
-        shifts: [{
-            shift: mockShiftData.get('shift1'),
-            dates: ['13/03/2018', '16/03/2018']
-        }]
-    },
-    employee2: {
-        id: 'employee2',
-        name: 'Drugi zaposleni',
-        avatarClass: 'female',
-        position: mockPositionData.get('position2'),
-        shifts: []
-    }
-});
+
 const INITIAL_STATE = new Map({
     'employees': new Map(),
     'shifts': new Map(),
     'positions': new Map()
 });
-let currentState = INITIAL_STATE.set('employees', mockEmployeeData).set('shifts', mockShiftData).set('positions', mockPositionData);
+let currentState = INITIAL_STATE.set('employees', Data.employees).set('shifts', Data.shifts).set('positions', Data.positions);
 
 const socket = io(`${location.protocol}//${location.hostname}:7171`);
 const store = createStore(reducer, currentState);
@@ -325,6 +250,7 @@ export const Core = {
     getCurrentState: getCurrentState,
     getEmployeeAvatarClasses: getEmployeeAvatarClasses,
     getPositions: getPositions,
+    getShifts: getShifts,
     getColors: getColors,
     getEmployees: getEmployees,
     getUniqueId: generateRandom,
