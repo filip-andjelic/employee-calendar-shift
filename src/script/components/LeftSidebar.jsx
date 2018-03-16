@@ -2,6 +2,7 @@ import React from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import {Map} from 'immutable';
 import {NewEntry} from './NewEntry';
+import {Core} from '../core/core';
 
 function validateNewEntry(type, entry) {
     let message = '';
@@ -17,7 +18,7 @@ function validateNewEntry(type, entry) {
             if (!entry.color) {
                 message += ' `color`,';
             }
-            if (!entry.employees || !entry.employees[0]) {
+            if (!entry.employees || !entry.employees.size) {
                 message += ' `employees`,';
             }
             if (message) {
@@ -149,6 +150,17 @@ export const LeftSidebar = React.createClass({
 
             return arrayOfChildren;
         }
+        function getShiftOptions() {
+            let shiftOptions = [];
+
+            shiftOptions.push(<option value="-1" key={Core.getUniqueId()}>Undo this action ...</option>);
+
+            component.props.shifts.forEach(function(entry) {
+                shiftOptions.push(<option value={entry.id} key={Core.getUniqueId()}>{entry.name}</option>);
+            });
+
+            return shiftOptions;
+        }
 
         let component = this;
         let employeeList = [];
@@ -259,6 +271,13 @@ export const LeftSidebar = React.createClass({
                     className={this.state.accordionState.shift ? 'fa fa-chevron-down' : 'fa fa-chevron-right'}/>
                 </div>
                 <div className="section-container"
+                     style={{'display': this.props.shiftPicker.display ? 'block' : 'none'}}>
+                    <div className="entry-creation-wrapper shift-entry-creation shift-picker-wrapper">
+                        <select onChange={(e) => this.props.shiftPicker.handle(e.target.value)}>{getShiftOptions()}</select>
+                        <input type="text" disabled value={this.props.shiftPicker.date.date + '/' + this.props.shiftPicker.date.name} />
+                    </div>
+                </div>
+                <div className="section-container"
                      style={{'display': this.state.accordionState.shift ? 'block' : 'none'}}>
                     <div className="entry-creation-wrapper shift-entry-creation">
                         <div className="section-header" onClick={() => this.state.creationAccordionHandle('shift')}>
@@ -281,6 +300,17 @@ export const LeftSidebar = React.createClass({
                 </div>
                 <div className="section-container"
                      style={{'display': this.state.accordionState.position ? 'block' : 'none'}}>
+                    <div className="entry-creation-wrapper position-entry-creation">
+                        <div className="section-header" onClick={() => this.state.creationAccordionHandle('position')}>
+                            <span>{!this.state.creationState.position ? 'Create ' : 'Save '} Position Entry</span>
+                            <i className={this.state.creationState.position ? 'fa fa-check success-status' : 'fa fa-plus'}/>
+                        </div>
+                        <div className="section-container"
+                             style={{'display': this.state.creationState.position ? 'block' : 'none'}}>
+                            <NewEntry modelChange={this.state.updateModel} type="position" refresh={this.props.refresh}/>
+                            <div className="error-message-wrapper">{this.state.errorMessage}</div>
+                        </div>
+                    </div>
                     {positionList}
                 </div>
             </div>

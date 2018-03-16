@@ -117,6 +117,7 @@ const employeeApi = {
             employee.id = generateRandom() + '_employee_id';
         }
 
+        employee.shifts = employee.shifts ? employee.shifts : [];
         employee.position = positionApi.updateEmployeePosition(employee, employee.position);
 
         currentState = setPosition(employee.position);
@@ -185,6 +186,12 @@ const shiftApi = {
 const positionApi = {
     updatePosition: (state, position) => {
         const positions = state.get('positions');
+
+        if (!position.id) {
+            position.id = generateRandom() + '_position_id';
+        }
+
+        position.employees = position.employees ? position.employees : [];
 
         return positions.set(position.id, position);
     },

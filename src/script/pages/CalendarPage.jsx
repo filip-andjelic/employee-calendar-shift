@@ -60,6 +60,18 @@ export const CalendarPage = React.createClass({
             shifts: this.props.shifts,
             positions: this.props.positions,
             employees: this.props.employees,
+            shiftPicker: {
+                display: false,
+                date: '',
+                handle: (shiftId) => {
+                    if (shiftId === '-1') {
+
+                    } else {
+
+                    }
+                    debugger;
+                }
+            },
             handlers: {
                 shift: (shift, shouldDelete) => {
                     this.props.handleShift(shift, shouldDelete);
@@ -91,6 +103,16 @@ export const CalendarPage = React.createClass({
                 },
                 shift: (entry) => {
                     // @TODO handle opening of left sidebar accordion on clicked entry
+                },
+                day: (day, employee) => {
+                    let shiftPicker = this.state.shiftPicker;
+
+                    shiftPicker.display = true;
+                    shiftPicker.date = day;
+                    shiftPicker.employee = employee;
+
+                    this.setState({'shiftPicker': shiftPicker});
+                    this.setState({'refreshNewEntry': true});
                 }
             }
         };
@@ -107,11 +129,13 @@ export const CalendarPage = React.createClass({
                                  positions={this.state.positions}
                                  employees={this.state.employees}
                                  handlers={this.state.handlers}
+                                 shiftPicker={this.state.shiftPicker}
                                  refresh={this.state.refreshNewEntry}/>
                 </div>
                 <div className="border-less page-section central-page-section">
                     <Calendar employeeClick={this.state.calendarHandlers.employee}
                               shiftClick={this.state.calendarHandlers.shift}
+                              dayClick={this.state.calendarHandlers.day}
                               employees={this.state.employees}
                               reload={this.state.reloadRender}/>
                 </div>

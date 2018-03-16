@@ -68,13 +68,12 @@ export const Calendar = React.createClass({
     },
     render: function() {
         const component = this;
-        const dayColumnHandle = (day, isHeaderClicked) => {
-            // When header day column is clicked, expand day data.
-            if (isHeaderClicked) {
-
-            } else {
+        const dayColumnHandle = (day, employeeRow) => {
+            if (employeeRow) {
                 // When body day column is clicked, guide to left sidebar.
-
+                this.props.dayClick(day, employeeRow);
+            } else {
+                // When header day column is clicked, expand day data.
             }
         };
         const isCurrentDate = (dayObject) => {
@@ -124,13 +123,18 @@ export const Calendar = React.createClass({
                             shiftsList.push(<div className="shift-entry"
                                                  key={Core.getUniqueId()}
                                                  style={{'backgroundColor': shift.color}}
-                                                 onClick={() => component.props.shiftClick(shift)}>{shift.name}</div>);
+                                                 onClick={(e) => {
+                                                     e.preventDefault();
+                                                     e.stopPropagation();
+                                                     component.props.shiftClick(shift)
+                                                 }
+                                                 }>{shift.name}</div>);
                         });
                     }
                     // If shift doesn't exist for this day, put day placeholder with empty shifts' array.
                     daysOfWeekArray.push(<div
                         className={isCurrentDate(dayObject) ? 'shift-column day-column current-day' : 'day-column shift-column'}
-                        onClick={() => dayColumnHandle(dayObject)}
+                        onClick={() => dayColumnHandle(dayObject, entry)}
                         key={Core.getUniqueId()}>
                         {shiftsList}
                     </div>);
@@ -140,7 +144,7 @@ export const Calendar = React.createClass({
                 component.state.dateRange.daysOfWeek.forEach((dayObject) => {
                     daysOfWeekArray.push(<div
                         className={isCurrentDate(dayObject) ? 'day-column current-day' : 'day-column'}
-                        onClick={() => dayColumnHandle(dayObject, true)}
+                        onClick={() => dayColumnHandle(dayObject, false)}
                         key={Core.getUniqueId()}>
                         <div className="day-name"
                              key={Core.getUniqueId()}>{dayObject.name}</div>

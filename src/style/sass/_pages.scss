@@ -6,7 +6,10 @@
   .page-wrapper {
     height: 100%;
     width: 100%;
+    border: 1px solid rgba(133, 221, 255, 0.6);
+    box-shadow: 0 0 40px 10px rgba(133, 221, 255, 0.7);
     padding: 30px;
+    background-color: rgba(133, 221, 255, 0.2);
 
     .page-content {
       margin: 25px 0;
@@ -112,14 +115,12 @@
         border-bottom: 1px solid $color_blue-clean;
       }
     }
-    .position-placeholder {
+    .position-placeholder, .shift-placeholder {
       padding: 3px 7px;
       border: 1px solid black;
       border-radius: 6px;
       margin-bottom: 5px;
-      color: black;
-    }
-    .shift-placeholder {
+      margin-right: 5px;
       color: black;
     }
     .employee-placeholder {
@@ -145,12 +146,12 @@
     .shift-positions-wrapper, .shift-employees-wrapper {
       display: flex;
       flex-direction: column;
-      max-width: calc((100% - #{$avatar-size} - 100px) / 2);
+      width: calc((100% - #{$avatar-size} - 100px) / 2);
       margin-left: 10px;
     }
     .shift-employees-wrapper {
       padding-left: 10px;
-      border-left: 1px solid black;
+      border-left: 1px solid $color_blue-light;
     }
   }
 }

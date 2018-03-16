@@ -22,6 +22,10 @@
       font-size: $_font-size-large;
       font-weight: 900;
       padding: 3px 10px 5px 50px;
+
+      &.shift-name {
+        margin-top: 10px;
+      }
     }
     .position-placeholder {
       display: inline-table;
@@ -44,11 +48,15 @@
       .employee-placeholder {
         max-width: calc((100% - #{$avatar-size} - 10px) / 2);
       }
+      &.position-employees {
+        flex-wrap: wrap;
+      }
     }
     .shift-description {
+      margin-top: 10px;
       padding-left: 10px;
       padding-top: 7px;
-      border-left: 1px solid black;
+      border-left: 1px solid $color_blue-light;
       word-wrap: break-word;
       word-break: break-all;
       max-width: 49%;
@@ -56,6 +64,25 @@
     .picked-color {
       width: 100%;
       height: 100%;
+    }
+    .shift-picker-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+
+      select {
+        background-color: $color_gray-dark-rgba;
+        padding: 3px;
+        border-radius: 4px;
+        margin-right: 10px;
+      }
+      input {
+        flex: 1 1 0;
+        max-width: 140px;
+        padding: 3px;
+        border-radius: 4px;
+        color: $color_blue-clean;
+        text-align: center;
+      }
     }
     .entry-creation-wrapper {
       border: 1px solid $color_blue-light;
@@ -123,6 +150,10 @@
         }
         .avatar-placeholder {
           margin: 0 5px 5px 0;
+          cursor: pointer;
+        }
+        .position-placeholder {
+          cursor: pointer;
         }
         .picked-item {
           transform: scale(0.7);

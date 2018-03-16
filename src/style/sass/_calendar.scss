@@ -22,6 +22,7 @@
     cursor: pointer;
 
     .entry-name {
+      flex: 0 0 100%;
       font-size: $_font-size-large;
       color: $color_yellow-light;
       font-weight: 900;

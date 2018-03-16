@@ -1,6 +1,7 @@
 import React from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import {Core} from '../core/core';
+import {List} from 'immutable';
 
 export const NewEntry = React.createClass({
     mixins: [PureRenderMixin],
@@ -18,7 +19,7 @@ export const NewEntry = React.createClass({
                             return id !== value.id
                         });
                     } else {
-                        newModel[key] = newModel[key] ? newModel[key].push(value.id) : [value.id];
+                        newModel[key] = newModel[key] ? newModel[key].push(value.id) : new List([value.id]);
                     }
                 } else if (key === 'position') {
                     if (newModel[key] && newModel[key].id === value.id) {
@@ -139,14 +140,8 @@ export const NewEntry = React.createClass({
             } else if (type === 'position') {
                 return <div className="entry-row">
                     {getColorPicker()}
-                    <input type="text" placeholder="Shift name" value={component.state.entryModel.name}
+                    <input type="text" placeholder="Position name" value={component.state.entryModel.name}
                            onChange={(e) => component.state.modelChange(e.target.value, 'name')}/>
-                    {getEmployeePicker()}
-                    <input type="textarea" placeholder="Shift description" rows="3"
-                           value={component.state.entryModel.description}
-                           onChange={(e) => component.state.modelChange(e.target.value, 'description')}/>
-                    <input type="date" onChange={(e) => component.state.modelChange(e.target.value, 'date')}
-                           value={component.state.entryModel.date}/>
                 </div>;
             }
         }

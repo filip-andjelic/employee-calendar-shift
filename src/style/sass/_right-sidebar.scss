@@ -21,6 +21,7 @@
 
     .section-container {
       display: flex;
+      flex-wrap: wrap;
       padding-top: 10px;
       margin-top: 10px;
     }
@@ -33,44 +34,6 @@
     font-size: $_font-size-large;
     font-weight: 900;
     padding: 3px 10px 5px 50px;
-  }
-  .avatar {
-    display: flex;
-    flex: 0 0 $avatar-size;
-    width: $avatar-size;
-    height: $avatar-size;
-    justify-content: center;
-    align-items: center;
-    background-color: red;
-    border: 1px solid black;
-    border-radius: 50%;
-    font-size: $_font-size-extra-large;
-  }
-  .position-placeholder {
-    padding: 3px 7px;
-    border: 1px solid black;
-    border-radius: 6px;
-    margin-bottom: 5px;
-    margin-right: 5px;
-  }
-  .employee-placeholder {
-    padding: 3px 7px;
-    border: 1px solid black;
-    border-radius: 6px;
-    background-color: green;
-    margin-bottom: 5px;
-    margin-right: 5px;
-  }
-  .shift-placeholder {
-    max-width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 3px 5px;
-    border: 1px solid black;
-    border-radius: 6px;
-    margin-bottom: 5px;
-    margin-right: 3px;
   }
   .shift-color, .position-color {
     width: $avatar-size;
