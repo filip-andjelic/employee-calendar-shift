@@ -332,7 +332,7 @@ const INITIAL_STATE = new Map({
 // Set mocked data for a start. :)
 let currentState = INITIAL_STATE.set('employees', Data.employees).set('shifts', Data.shifts).set('positions', Data.positions);
 
-const socket = io(`${location.protocol}//${location.hostname}:7171`);
+//const socket = io(`${location.protocol}//${location.hostname}:7171`);
 const store = createStore(reducer, currentState);
 const moment = require('../../../node_modules/moment/min/moment.min.js');
 const dateFormat = 'DD/MM/YYYY';
@@ -342,14 +342,9 @@ export const Core = {
     setEmployee: setEmployee,
     setShift: setShift,
     setPosition: setPosition,
-    getCurrentState: getCurrentState,
     getEmployeeAvatarClasses: getEmployeeAvatarClasses,
-    getPositions: getPositions,
-    getShifts: getShifts,
     getColors: getColors,
-    getEmployees: getEmployees,
     getUniqueId: generateRandom,
-    socket: socket,
     store: store,
     moment: moment,
     dateFormat: dateFormat
