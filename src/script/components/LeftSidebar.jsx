@@ -7,18 +7,15 @@ import {Core} from '../core/core';
 function validateNewEntry(type, entry) {
     let message = '';
 
-    switch(type) {
+    switch (type) {
         case 'shift':
             if (!entry.name) {
                 message += '`name`,';
             }
-            if (!entry.date) {
-                message += ' `date`,';
-            }
             if (!entry.color) {
                 message += ' `color`,';
             }
-            if (!entry.employees || !entry.employees.size) {
+            if (!entry.employees || !entry.employees.length) {
                 message += ' `employees`,';
             }
             if (message) {
@@ -57,11 +54,19 @@ function validateNewEntry(type, entry) {
 
 export const LeftSidebar = React.createClass({
     mixins: [PureRenderMixin],
+    componentWillReceiveProps(newProps) {
+        if (newProps.refresh !== this.state.refresh) {
+            this.setState({'entryForEditing':  {
+                shift: {},
+                employee: {},
+                position: {}
+            }});
+            this.setState({'refresh': newProps.refresh});
+        }
+    },
     getInitialState() {
         return {
             isEditing: new Map(),
-            positions: this.props.positions,
-            employees: this.props.employees,
             accordionState: {
                 employee: false,
                 shift: false,
@@ -73,8 +78,14 @@ export const LeftSidebar = React.createClass({
                 position: false
             },
             newEntry: {},
+            entryForEditing: {
+                shift: {},
+                employee: {},
+                position: {}
+            },
             errorMessage: '',
             sectionAccordionHandle: (section) => {
+                // Handles opening of accordion for section list
                 let currentState = this.state.accordionState;
 
                 currentState[section] = !currentState[section];
@@ -83,6 +94,7 @@ export const LeftSidebar = React.createClass({
                 this.setState({'reloadRender': !this.state.reloadRender});
             },
             creationAccordionHandle: (section) => {
+                // Handles opening of creation accordion for section
                 let currentState = this.state.creationState;
 
                 if (currentState) {
@@ -90,14 +102,12 @@ export const LeftSidebar = React.createClass({
 
                     if (currentState[section]) {
                         if (validationMessage) {
-                            this.setState({'errorMessage': false});
                             this.setState({'errorMessage': validationMessage});
 
                             return;
                         } else {
                             this.props.handlers[section](this.state.newEntry);
                         }
-
                     }
 
                     currentState[section] = !currentState[section];
@@ -117,15 +127,27 @@ export const LeftSidebar = React.createClass({
             },
             handleEdit: (entryType, isEditingFinished, entry) => {
                 if (!isEditingFinished) {
-                    let currentState = this.state.isEditing.set(entryType + '-' + entry.id, true);
+                    let creationState = this.state.creationState;
+                    let entryForEditing = this.state.entryForEditing;
+                    let clonedEntry = Object.assign({}, entry);
 
-                    this.setState({'isEditing': currentState});
+                    creationState[entryType] = true;
+                    entryForEditing[entryType] = clonedEntry;
+
+                    this.setState({'newEntry': clonedEntry});
+                    this.setState({'creationState': creationState});
+                    this.setState({'entryForEditing': entryForEditing});
                     this.setState({'reloadRender': !this.state.reloadRender});
-                } else {
-                    this.props.handlers[entryType](entry);
                 }
             },
             handleDelete: (entryType, entry) => {
+                if (entryType === 'position' && entry.employees && entry.employees.length) {
+                    this.setState({'errorDeletingMessage': 'You can\'t delete this position, for it is assigned to employee(s).'});
+
+                    return;
+                }
+
+                this.setState({'errorDeletingMessage': false});
                 this.props.handlers[entryType](entry, true);
             }
         };
@@ -137,19 +159,22 @@ export const LeftSidebar = React.createClass({
             collection.forEach((entry) => {
                 switch (type) {
                     case 'employees':
-                        arrayOfChildren.push(<div className={parent + "-" + type + " employee-placeholder text-ellipsis icon-" + entry.avatarClass}
-                                                  key={Core.getUniqueId()}>{entry.name}</div>);
+                        arrayOfChildren.push(<div
+                            className={parent + "-" + type + " employee-placeholder text-ellipsis icon-" + entry.avatarClass}
+                            key={Core.getUniqueId()}>{entry.name}</div>);
                         break;
                     case 'positions':
-                        arrayOfChildren.push(<div className={parent + "-" + type + " position-placeholder text-ellipsis background-" + entry.color}
-                                                  style={{'backgroundColor': entry.color}}
-                                                  key={Core.getUniqueId()}>{entry.name}</div>);
+                        arrayOfChildren.push(<div
+                            className={parent + "-" + type + " position-placeholder text-ellipsis background-" + entry.color}
+                            style={{'backgroundColor': entry.color}}
+                            key={Core.getUniqueId()}>{entry.name}</div>);
                         break;
                 }
             });
 
             return arrayOfChildren;
         }
+
         function getShiftOptions() {
             let shiftOptions = [];
 
@@ -255,14 +280,22 @@ export const LeftSidebar = React.createClass({
                 </div>
                 <div className="section-container"
                      style={{'display': this.state.accordionState.employee ? 'block' : 'none'}}>
-                    <div className={(this.state.creationState.employee ? "opened-accordion " : "") + "entry-creation-wrapper employee-entry-creation"}>
+                    <div
+                        className={(this.state.creationState.employee ? "opened-accordion " : "") + "entry-creation-wrapper employee-entry-creation"}>
                         <div className="section-header" onClick={() => this.state.creationAccordionHandle('employee')}>
                             <span>{!this.state.creationState.employee ? 'Create ' : 'Save '} Employee Entry</span>
                             <i className={this.state.creationState.employee ? 'fa fa-check success-status' : 'fa fa-plus'}/>
                         </div>
                         <div className="section-container"
                              style={{'display': this.state.creationState.employee ? 'block' : 'none'}}>
-                            <NewEntry modelChange={this.state.updateModel} type="employee" refresh={this.props.refresh}/>
+                            <NewEntry modelChange={this.state.updateModel}
+                                      type="employee"
+                                      refresh={this.props.refresh}
+                                      existingEntry={this.state.entryForEditing.employee}
+                                      shifts={component.props.shifts}
+                                      positions={component.props.positions}
+                                      employees={component.props.employees}
+                            />
                             <div className="error-message-wrapper">{this.state.errorMessage}</div>
                         </div>
                     </div>
@@ -277,21 +310,32 @@ export const LeftSidebar = React.createClass({
                 <div className="section-container"
                      style={{'display': this.props.shiftPicker.display ? 'block' : 'none'}}>
                     <div className="entry-creation-wrapper shift-entry-creation shift-picker-wrapper">
-                        <select onChange={(e) => this.props.shiftPicker.handle(e.target.value)}>{getShiftOptions()}</select>
-                        <div className="shift-picker-button" onClick={(e) => this.props.shiftPicker.handle(null, true)}>Pick this shift</div>
-                        <input type="text" disabled value={this.props.shiftPicker.date.date + ' - ' + this.props.shiftPicker.date.name} />
+                        <select
+                            onChange={(e) => this.props.shiftPicker.handle(e.target.value)}>{getShiftOptions()}</select>
+                        <div className="shift-picker-button" onClick={(e) => this.props.shiftPicker.handle(null, true)}>
+                            Pick this shift
+                        </div>
+                        <input type="text" disabled
+                               value={this.props.shiftPicker.date.date + ' - ' + this.props.shiftPicker.date.name}/>
                     </div>
                 </div>
                 <div className="section-container"
                      style={{'display': this.state.accordionState.shift ? 'block' : 'none'}}>
-                    <div className={(this.state.creationState.shift ? "opened-accordion " : "") + "entry-creation-wrapper shift-entry-creation"}>
+                    <div
+                        className={(this.state.creationState.shift ? "opened-accordion " : "") + "entry-creation-wrapper shift-entry-creation"}>
                         <div className="section-header" onClick={() => this.state.creationAccordionHandle('shift')}>
                             <span>{!this.state.creationState.shift ? 'Create ' : 'Save '} Shift Entry</span>
                             <i className={this.state.creationState.shift ? 'fa fa-check success-status' : 'fa fa-plus'}/>
                         </div>
                         <div className="section-container"
                              style={{'display': this.state.creationState.shift ? 'block' : 'none'}}>
-                            <NewEntry modelChange={this.state.updateModel} type="shift" refresh={this.props.refresh}/>
+                            <NewEntry modelChange={this.state.updateModel}
+                                      type="shift"
+                                      refresh={this.props.refresh}
+                                      existingEntry={this.state.entryForEditing.shift}
+                                      shifts={component.props.shifts}
+                                      positions={component.props.positions}
+                                      employees={component.props.employees}/>
                             <div className="error-message-wrapper">{this.state.errorMessage}</div>
                         </div>
                     </div>
@@ -305,17 +349,25 @@ export const LeftSidebar = React.createClass({
                 </div>
                 <div className="section-container"
                      style={{'display': this.state.accordionState.position ? 'block' : 'none'}}>
-                    <div className={(this.state.creationState.position ? "opened-accordion " : "") + "entry-creation-wrapper position-entry-creation"}>
+                    <div
+                        className={(this.state.creationState.position ? "opened-accordion " : "") + "entry-creation-wrapper position-entry-creation"}>
                         <div className="section-header" onClick={() => this.state.creationAccordionHandle('position')}>
                             <span>{!this.state.creationState.position ? 'Create ' : 'Save '} Position Entry</span>
                             <i className={this.state.creationState.position ? 'fa fa-check success-status' : 'fa fa-plus'}/>
                         </div>
                         <div className="section-container"
                              style={{'display': this.state.creationState.position ? 'block' : 'none'}}>
-                            <NewEntry modelChange={this.state.updateModel} type="position" refresh={this.props.refresh}/>
+                            <NewEntry modelChange={this.state.updateModel}
+                                      type="position"
+                                      refresh={this.props.refresh}
+                                      shifts={component.props.shifts}
+                                      positions={component.props.positions}
+                                      employees={component.props.employees}
+                                      existingEntry={this.state.entryForEditing.position}/>
                             <div className="error-message-wrapper">{this.state.errorMessage}</div>
                         </div>
                     </div>
+                    <div className="error-deleting-wrapper">{this.state.errorDeletingMessage}</div>
                     {positionList}
                 </div>
             </div>

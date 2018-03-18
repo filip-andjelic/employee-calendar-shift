@@ -69,9 +69,8 @@ function setPosition(position, shouldDelete) {
 /***** GETTER FUNCTIONS *******/
 
 function getCurrentState() {
-    return currentState;
+    return new Map(currentState);
 }
-
 function getColors() {
     return [
         'brown',
@@ -82,7 +81,6 @@ function getColors() {
         'dodgerblue'
     ];
 }
-
 function getEmployeeAvatarClasses() {
     return [
         'product-hunt',
@@ -93,53 +91,63 @@ function getEmployeeAvatarClasses() {
         'ban'
     ];
 }
-
 function getEmployees() {
     return currentState.get('employees');
 }
-
 function getPositions() {
     return currentState.get('positions');
 }
-
 function getShifts() {
     return currentState.get('shifts');
 }
-
 function generateRandom() {
     return new Date().valueOf() * Math.random();
 }
 
+/***** APIs for manipulating Entries *******/
+
 const employeeApi = {
     updateEmployee: (state, employee) => {
+        let existingEmployee = state.get('employees').get(employee.id);
         const employees = state.get('employees');
 
+        // Add ID for new Entries
         if (!employee.id) {
             employee.id = generateRandom() + '_employee_id';
+        }
+        // When employee's position is changed, delete employee from previous position's employee list
+        if (existingEmployee && existingEmployee.position.id !== employee.position.id) {
+            positionApi.updateEmployeePosition(existingEmployee, existingEmployee.position, true);
         }
 
         employee.shifts = employee.shifts ? employee.shifts : [];
         employee.position = positionApi.updateEmployeePosition(employee, employee.position);
-
-        currentState = setPosition(employee.position);
+        // Update employee data in shifts' employee list
+        employee.shifts.forEach((object) => {
+            shiftApi.updateShiftEmployee(object.shift, employee);
+        });
 
         return employees.set(employee.id, employee);
     },
     updateEmployeeShifts: (state, shift, employee) => {
         let isShiftUpdated = false;
 
+        // Update edited shifts' dates and info
         employee.shifts.forEach((object) => {
             if (object.shift && object.shift.id === shift.id) {
                 isShiftUpdated = true;
 
-                object.dates.push(shift.date);
+                if (shift.date) {
+                    object.dates.push(shift.date);
+                }
+                object.shift = shift;
             }
         });
-
+        // When new shift is added, map it to the employee's entry
         if (!isShiftUpdated) {
             let newShiftObject = {
                 shift: shift,
-                dates: [shift.date]
+                dates: shift.date ? [shift.date] : []
             };
 
             employee.shifts.push(newShiftObject);
@@ -149,44 +157,86 @@ const employeeApi = {
 
         return state.set('employees', employees);
     },
+    updateEmployeePosition: (state, position, employee) => {
+        let employees = state.get('employees');
+
+        employee.position = position;
+        // Update employee data in shifts' employee list
+        employee.shifts.forEach((object) => {
+            shiftApi.updateShiftEmployee(object.shift, employee);
+        });
+        employees.set(employee.id, employee);
+
+        return state.set('employees', employees);
+    },
     deleteEmployee: (state, employee) => {
         const employees = state.get('employees');
 
+        positionApi.updateEmployeePosition(employee, employee.position, true);
+        employee.shifts.forEach((object) => {
+            shiftApi.updateShiftEmployee(object.shift, employee, true);
+        });
+
         return employees.delete(employee.id);
+    },
+    deleteShiftEmployee: (employee, shift) => {
+        let employees = currentState.get('employees');
+
+        employee.shifts = employee.shifts.filter((object) => {
+            if (object.shift && object.shift.id !== shift.id) {
+                return object;
+            }
+        });
+        employees.set(employee.id, employee);
+
+        currentState.set('employees', employees);
     }
 };
 const shiftApi = {
     updateShift: (state, shift, existingEmployee) => {
         const shifts = state.get('shifts');
+        let existingShift = false;
         let employees = [];
         let positions = [];
 
+        // Add ID for new Entries
         if (!shift.id) {
             shift.id = generateRandom() + '_shift_id';
         } else {
-            shift = shifts.get(shift.id);
+            existingShift = shifts.get(shift.id);
         }
-
+        // When employee day column from calendar is clicked
         if (existingEmployee) {
             let existingEmployeeId = typeof existingEmployee === 'object' ? existingEmployee.id : existingEmployee;
-            let updatedEmployee = shift.employees.filter((emp) => {return emp.id === existingEmployeeId})[0];
+            let updatedEmployee = shift.employees.filter((emp) => { return emp.id === existingEmployeeId })[0];
 
             employees = shift.employees;
             positions = shift.positions;
-
-            if (!positions.filter((pos) => {return pos.id === updatedEmployee.position.id})[0]) {
+            // Add employee's position if it doesn't exist in shift's position list
+            if (!positions.filter((pos) => { return pos.id === updatedEmployee.position.id })[0]) {
                 positions.push(updatedEmployee.position);
             }
-
+            // Update employee's shift data list
             state = employeeApi.updateEmployeeShifts(state, shift, updatedEmployee);
         } else {
             shift.employees.forEach((entry) => {
                 let employee = typeof entry === 'object' ? entry : state.get('employees').get(entry);
+
+                // When shift's employee list is changed, compare it to previous one
+                if (existingShift && existingShift.employees) {
+                    existingShift.employees = existingShift.employees.filter((emp) => { return emp.id !== employee.id });
+                }
                 employees.push(employee);
                 positions.push(employee.position);
-
+                // Update employee's shift list data
                 state = employeeApi.updateEmployeeShifts(state, shift, employee);
             });
+            // When shift is deleted from employee's list
+            if (existingShift && existingShift.employees) {
+                existingShift.employees.forEach((emp) => {
+                    employeeApi.deleteShiftEmployee(emp, existingShift);
+                });
+            }
         }
 
         shift.employees = new List(employees).toArray();
@@ -194,8 +244,34 @@ const shiftApi = {
 
         return shifts.set(shift.id, shift);
     },
+    updateShiftEmployee: (shift, employee, shouldDelete) => {
+        shift = currentState.get('shifts').get(shift.id);
+        let employees = [];
+        let positions = [];
+
+        // When employee changed, replace it's data in shift's employee list
+        shift.employees.forEach((emp) => {
+            if (shouldDelete && emp.id === employee.id) {
+                return;
+            }
+            if (emp.id === employee.id) {
+                employees.push(employee);
+                positions.push(employee.position);
+            } else {
+                employees.push(emp);
+                positions.push(emp.position);
+            }
+        });
+
+        shift.employees = employees;
+        shift.positions = positions;
+    },
     deleteShift: (state, shift) => {
         const shifts = state.get('shifts');
+
+        shift.employees.forEach((emp) => {
+            employeeApi.deleteShiftEmployee(emp, shift);
+        });
 
         return shifts.delete(shift.id);
     }
@@ -203,18 +279,36 @@ const shiftApi = {
 const positionApi = {
     updatePosition: (state, position) => {
         const positions = state.get('positions');
+        let employees = [];
 
+        // Add ID for new Entries
         if (!position.id) {
             position.id = generateRandom() + '_position_id';
         }
+        if (position.employees) {
+            position.employees.forEach((employee) => {
+                if (typeof employee !== 'object') {
+                    employee = getEmployees().get(employee);
+                }
+                if (typeof employee === 'object') {
+                    state = employeeApi.updateEmployeePosition(state, position, employee);
+                    employees.push(employee);
+                }
+            });
+        }
 
-        position.employees = position.employees ? position.employees : [];
+        position.employees = employees;
 
         return positions.set(position.id, position);
     },
-    updateEmployeePosition: (employee, position) => {
+    updateEmployeePosition: (employee, position, shouldDelete) => {
         let updatedPosition = currentState.get('positions').get(position.id);
 
+        if (shouldDelete && updatedPosition.employees) {
+            updatedPosition.employees = updatedPosition.employees.filter((emp) => { return emp.id !== employee.id });
+
+            return updatedPosition;
+        }
         if (updatedPosition.employees) {
             updatedPosition.employees.push(employee);
         } else {
@@ -235,6 +329,7 @@ const INITIAL_STATE = new Map({
     'shifts': new Map(),
     'positions': new Map()
 });
+// Set mocked data for a start. :)
 let currentState = INITIAL_STATE.set('employees', Data.employees).set('shifts', Data.shifts).set('positions', Data.positions);
 
 const socket = io(`${location.protocol}//${location.hostname}:7171`);

@@ -5,23 +5,28 @@ import {Core} from '../core/core';
 export const RightSidebar = React.createClass({
     mixins: [PureRenderMixin],
     render: function() {
-        function makeArrayOfChildren(collection, type, parent, id) {
+        function makeArrayOfChildren(collection, type, parent) {
             let arrayOfChildren = [];
 
             collection.forEach((entry) => {
                 switch (type) {
                     case 'employees':
                         arrayOfChildren.push(<div className={parent + "-" + type + " employee-placeholder text-ellipsis icon-" + entry.avatarClass}
-                                                  key={Core.getUniqueId()}><i className={'fa fa-' + entry.avatarClass} key={Core.getUniqueId()}/>{entry.name}</div>);
+                                                  key={Core.getUniqueId()}
+                                            onClick={() => component.props.handlers[type](entry)}>
+                            <i className={'fa fa-' + entry.avatarClass} key={Core.getUniqueId()}/>{entry.name}
+                            </div>);
                         break;
                     case 'positions':
                         arrayOfChildren.push(<div className={parent + "-" + type + " position-placeholder text-ellipsis background-" + entry.color}
                                                   style={{'backgroundColor': entry.color}}
+                                                  onClick={() => component.props.handlers[type](entry)}
                                                   key={Core.getUniqueId()}>{entry.name}</div>);
                         break;
                     case 'shifts':
                         arrayOfChildren.push(<div className={parent + "-" + type + " shift-placeholder text-ellipsis background-" + entry.color}
                                                   style={{'backgroundColor': entry.color}}
+                                                  onClick={() => component.props.handlers[type](entry)}
                                                   key={Core.getUniqueId()}>{entry.name}</div>);
                         break;
                 }

@@ -22,7 +22,7 @@ let mockedPosition = {
 };
 let mockedPosition2 = {
     id: 'position2',
-    name: 'Kafe Kuvarica',
+    name: 'IT Konsultant',
     color: 'dodgerblue',
     employees: [mockedEmployee2]
 };
@@ -54,5 +54,5 @@ export let Data = {
 
 mockedEmployee.shifts.push({
     shift: Data.shifts.get('shift1'),
-    dates: ['15/03/2018', '12/03/2018']
+    dates: ['20/03/2018', '22/03/2018']
 });

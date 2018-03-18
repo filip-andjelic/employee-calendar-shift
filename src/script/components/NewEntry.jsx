@@ -19,7 +19,11 @@ export const NewEntry = React.createClass({
                             return id !== value.id
                         });
                     } else {
-                        newModel[key] = newModel[key] ? newModel[key].push(value.id) : new List([value.id]);
+                        if (newModel[key]) {
+                            newModel[key].push(value.id);
+                        } else {
+                            newModel[key] = [value.id];
+                        }
                     }
                 } else if (key === 'position') {
                     if (newModel[key] && newModel[key].id === value.id) {
@@ -47,8 +51,19 @@ export const NewEntry = React.createClass({
         };
     },
     componentWillReceiveProps(newProps) {
-        if (newProps.refresh) {
+        if (newProps.refresh !== this.state.refresh) {
             this.setState({'entryModel': {}});
+            this.setState({'refresh': newProps.refresh});
+        }
+        if (newProps.existingEntry && newProps.existingEntry.id) {
+            if (newProps.existingEntry.employees) {
+                let employeeIds = [];
+
+                newProps.existingEntry.employees.forEach((emp) => { employeeIds.push(emp.id) });
+
+                newProps.existingEntry.employees = employeeIds;
+            }
+            this.setState({'entryModel': newProps.existingEntry});
         }
     },
     render: function() {
@@ -69,7 +84,7 @@ export const NewEntry = React.createClass({
         }
 
         function getEmployeePicker() {
-            const entries = Core.getEmployees();
+            const entries = component.props.employees;
             let entryPlaceholders = [];
 
             entries.forEach((entry) => {
@@ -102,7 +117,7 @@ export const NewEntry = React.createClass({
         }
 
         function getPositionPicker() {
-            const positions = Core.getPositions();
+            const positions = component.props.positions;
             let positionPlaceholders = [];
 
             positions.forEach((position) => {

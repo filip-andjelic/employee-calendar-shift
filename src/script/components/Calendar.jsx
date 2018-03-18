@@ -1,10 +1,17 @@
 import React from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
+import {MAp} from 'immutable';
 import {Core} from '../core/core';
 
 const moment = Core.moment;
 const dateFormat = Core.dateFormat;
 
+/* Generates week view based on isoWeek number provided
+ *
+ * @param number {Integer}, component {Object}
+ *
+ * @return days of week {Array}
+ */
 function setDateRange(number, component) {
     let pickedWeekNumber = 0;
     let daysOfWeek = [];
@@ -33,7 +40,7 @@ function setDateRange(number, component) {
         };
 
         dayObject.name = daysMap[i];
-        dayObject.date = pickedWeek.day(i).format(dateFormat);
+        dayObject.date = pickedWeek.day(i).isoWeek(pickedWeekNumber).format(dateFormat);
 
         daysOfWeek.push(dayObject);
     }
@@ -50,6 +57,42 @@ function setDateRange(number, component) {
 
 export const Calendar = React.createClass({
     mixins: [PureRenderMixin],
+    componentWillReceiveProps(newProps) {
+        if (newProps.filter) {
+            let filteredEmployees = new Map();
+            const entryId = newProps.filter.id;
+
+            switch(newProps.filter.property) {
+                case 'shift':
+                    newProps.employees.forEach((employee) => {
+                        if (employee.shifts && employee.shifts.filter((shift) => { return shift.shift.id === entryId })[0]) {
+                            filteredEmployees.set(employee.id, employee);
+                        }
+                    });
+                    break;
+                case 'position':
+                    newProps.employees.forEach((employee) => {
+                        if (employee.position.id === entryId) {
+                            filteredEmployees.set(employee.id, employee);
+                        }
+                    });
+                    break;
+                case 'employee':
+                    newProps.employees.forEach((employee) => {
+                        if (employee.id === entryId) {
+                            filteredEmployees.set(employee.id, employee);
+                        }
+                    });
+                    break;
+            }
+            this.setState({'employees': filteredEmployees});
+
+            return;
+        }
+        if (newProps.employees) {
+            this.setState({'employees': newProps.employees});
+        }
+    },
     getInitialState() {
         return {
             employees: this.props.employees,
@@ -57,12 +100,6 @@ export const Calendar = React.createClass({
             dateRange: {
                 currentDate: moment().format(dateFormat),
                 daysOfWeek: setDateRange(0)
-            },
-            currentDay: () => {
-                // @TODO return moment current day
-            },
-            directionsHandle: (direction) => {
-                // @TODO handle next/prev week loading
             }
         };
     },
@@ -163,7 +200,7 @@ export const Calendar = React.createClass({
         let employeesRows = () => {
             let employees = [];
 
-            component.props.employees.forEach((entry, index) => {
+            component.state.employees.forEach((entry) => {
                 employees.push(<div className="entry-calendar-row"
                                     key={Core.getUniqueId()}>
                     <div className="entry-placeholder employee-column"
